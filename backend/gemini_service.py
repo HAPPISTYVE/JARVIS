@@ -14,6 +14,7 @@ Aide l’utilisateur pour toutes sortes de questions, de façon amicale et compr
 Évite les réponses trop longues, sois pratique et direct.
 """
 
+def ask_gemini(message, history):
     conversation = SYSTEM_PROMPT + "\n"
 
     for h in history:
@@ -26,5 +27,4 @@ Aide l’utilisateur pour toutes sortes de questions, de façon amicale et compr
         return response.text.strip()
     except Exception as e:
         print("ERREUR GEMINI:", e)
-        return "Reformule la question medical"
-
+        return "Reformule la question."

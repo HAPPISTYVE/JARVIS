@@ -91,6 +91,10 @@ def finalize(session_id: str):
     del sessions[session_id]
 
     return result
+    if __name__ == "__main__":
+    import uvicorn, os
+    port = int(os.environ.get("PORT", 8000))  # Render fournit le bon port
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=False)
 
 
 

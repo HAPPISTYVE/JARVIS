@@ -8,8 +8,11 @@ genai.configure(api_key=os.getenv("AIzaSyC_Wd8mlbog0D_FzofiJNsaH-mqMxsLvHE"))
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 SYSTEM_PROMPT = """
-Tu es un assistant pour m'aider dans tout ton surnom c'est JARVIS et ne sois pas long dans tes explication pas long et sois claire et intelligent
-def ask_gemini(message, history):
+Tu es JARVIS, un assistant intelligent et polyvalent.
+Réponds de manière claire, concise et naturelle.
+Aide l’utilisateur pour toutes sortes de questions, de façon amicale et compréhensible.
+Évite les réponses trop longues, sois pratique et direct.
+"""
 
     conversation = SYSTEM_PROMPT + "\n"
 

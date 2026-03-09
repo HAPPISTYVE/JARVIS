@@ -156,36 +156,40 @@ body {
   
 }
 
-.welcome-center{
-  
+/* WELCOME CENTER */
+.welcome-center {
   text-align: center;
-  margin-top: 60px;
-  padding: 20px;
+  margin-top: 40px;
+  padding: 15px;
   color: #475569;
 }
-.welcome-center h2{
-  font-size: 22px;
+
+.welcome-center h2 {
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 24px;
-  color:#1e293b;
+  margin-bottom: 20px;
+  color: #1e293b;
 }
-.suggestions{
+
+/* SUGGESTIONS */
+.suggestions {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 12px;
-
+  gap: 8px;
 }
-.suggestions button{
-  padding: 10px 18px;
+
+.suggestions button {
+  padding: 8px 12px;
   border-radius: 25px;
   border: 1px solid #e2e8f0;
   background: white;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   transition: 0.2s ease;
 }
-.suggestions button:hover{
+
+.suggestions button:hover {
   background: #f1f5f9;
   transform: translateY(-2px);
 }

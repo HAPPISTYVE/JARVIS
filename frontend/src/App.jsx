@@ -10,7 +10,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      text: "Bonjour HAPPI STYVE ! je suis JARVIS, ton assistant. Dis moi ce que tu veux faire aujourd'hui."
+      text: "Bonjour styve! je suis JARVIS, ton assistant. Dis moi ce que tu veux faire aujourd'hui."
     }
   ]);
   const [input, setInput] = useState("");

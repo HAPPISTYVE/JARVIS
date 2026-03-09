@@ -1,7 +1,7 @@
 function Disclaimer() {
   return (
     <div className="disclaimer">
-      This AI provides informational support only and does not replace professional medical advice.
+     JARVIS pour vous Servir. Je peux aussi me tromper.
     </div>
   );
 }

@@ -23,14 +23,16 @@ body {
 
 #root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* APP CONTAINER */
 .app {
   width: 100%;
   margin: 0 auto;
-  padding: 15px;
-  height: 95vh;
+  padding: 10px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   border-radius: 0;
@@ -40,7 +42,7 @@ body {
 
 /* HEADER */
 .header {
-  padding: 15px;
+  padding: 12px;
   border-bottom: 1px solid #eee;
 }
 
@@ -63,16 +65,18 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  justify-content: flex-end; /* messages collés en bas */
 }
 
 /* MESSAGES */
 .message {
-  max-width: 85%;
-  padding: 10px 14px;
+  max-width: 80%;
+  padding: 8px 12px;
   border-radius: 16px;
   font-size: 13px;
   line-height: 1.4;
+  opacity: 0.9; /* moins visible */
   animation: fadeIn 0.25s ease;
 }
 
@@ -92,20 +96,21 @@ body {
 
 /* INPUT AREA */
 .input-bar {
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
+  position: relative; /* pour placer le micro dedans */
+  padding: 12px 12px;
   display: flex;
   gap: 8px;
-  background: transparent;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
 }
 
 .input-bar input {
   flex: 1;
-  padding: 12px 14px;
+  padding: 14px 40px 14px 14px; /* espace pour le micro */
   border-radius: 25px;
   border: 1px solid #e0e3e8;
   background: #f4f6fb;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
 }
 
@@ -117,6 +122,17 @@ body {
   background: #ffffff;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* MICROPHONE BUTTON */
+.mic-btn {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 /* SEND BUTTON */
@@ -136,21 +152,6 @@ body {
 
 .send-btn:hover {
   transform: scale(1.05);
-}
-
-/* MICROPHONE BUTTON */
-.mic-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.mic-btn:hover {
-  background: #e6e9f2;
 }
 
 /* LOADER */
@@ -188,7 +189,7 @@ body {
 /* WELCOME CENTER */
 .welcome-center {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 20px;
   padding: 15px;
   color: #475569;
 }
@@ -196,7 +197,7 @@ body {
 .welcome-center h2 {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #1e293b;
 }
 

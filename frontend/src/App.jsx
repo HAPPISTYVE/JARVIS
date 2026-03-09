@@ -10,7 +10,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      text: "Welcome. Please describe your symptoms and I will provide a structured clinical analysis."
+      text: "Bonjour HAPPI STYVE ! je suis JARVIS, ton assistant. Dis moi ce que tu veux faire aujourd'hui."
     }
   ]);
   const [input, setInput] = useState("");

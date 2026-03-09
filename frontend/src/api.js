@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://jarvis-api-ukki.onrender.com",
+  baseURL: "https://jarvis-api-ukki.onrender.com/",
 });
 
 export const sendMessage = async (sessionID, message) => {

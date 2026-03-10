@@ -1,21 +1,19 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from models import Patient
-from gemini_service import ask_gemini
+from groq_service import ask_ai
 from conversation_engine import update_patient
 from redflag_engine import evaluate_redflags
 from protocol_engine import headache_protocol
 from ml_engine import predict
 from pdf_generator import generate_pdf
-import shutil, os
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 
-# --- AJOUTE L'IMPORT MANQUANT ICI ---
-# from audio_service import speech_to_text 
+import uvicorn
 
 app = FastAPI(title="JARVIS Medical API")
 
+# CORS pour React / Vercel
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,19 +25,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# stockage des sessions
 sessions = {}
 
 class Message(BaseModel):
     session_id: str
     message: str
 
+
+# test serveur
 @app.get("/")
 def health_check():
-    return {"status": "online", "system": "JARVIS"}
+    return {
+        "status": "online",
+        "system": "JARVIS"
+    }
 
+
+# chat principal
 @app.post("/chat")
 async def chat(data: Message):
-    # Initialisation de la session si inexistante
+
+    if len(sessions) > 100:
+        sessions.clear()
+
     if data.session_id not in sessions:
         sessions[data.session_id] = {
             "history": [],
@@ -47,34 +56,35 @@ async def chat(data: Message):
         }
 
     session = sessions[data.session_id]
-    
+
     try:
-        # Mise à jour des données structurées du patient via le message
+
         session["patient"] = update_patient(session["patient"], data.message)
 
-        # Appel à Gemini (ton service corrigé précédemment)
-        response = ask_gemini(data.message, session["history"])
+        response = ask_ai(data.message, session["history"])
 
-        # Sauvegarde dans l'historique
         session["history"].append({
             "user": data.message,
             "bot": response
         })
 
         return {"response": response}
+
     except Exception as e:
-        print(f"Erreur Chat: {e}")
+        print("Erreur Chat:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# analyse finale
 @app.post("/finalize/{session_id}")
 def finalize(session_id: str):
+
     if session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Session expirée ou introuvable")
+        raise HTTPException(status_code=404, detail="Session introuvable")
 
     session = sessions[session_id]
     patient = session["patient"]
 
-    # Logique médicale
     patient.triage_level = evaluate_redflags(patient)
 
     features = [
@@ -85,6 +95,7 @@ def finalize(session_id: str):
     ]
 
     ml_result = predict(features)
+
     diagnosis = ml_result if ml_result else headache_protocol(patient)
 
     result = {
@@ -93,11 +104,12 @@ def finalize(session_id: str):
         "summary": "Analyse terminée par JARVIS"
     }
 
-    # Génération du PDF
     pdf_path = f"rapport_{session_id}.pdf"
     generate_pdf(result, pdf_path)
-    
-    # Nettoyage de la session après finalisation
-    # del sessions[session_id] 
 
     return result
+
+
+# lancement local
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,16 +1,38 @@
-import google.generativeai as genai
+from groq import Groq
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-model = genai.GenerativeModel("gemini-2.0-flash")
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def ask_gemini(message, history):
+
+    messages = []
+
+    for h in history:
+        messages.append({
+            "role": "user",
+            "content": h["user"]
+        })
+
+        messages.append({
+            "role": "assistant",
+            "content": h["bot"]
+        })
+
+    messages.append({
+        "role": "user",
+        "content": message
+    })
+
     try:
-        response = model.generate_content(message)
-        return response.text
+        chat = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=messages
+        )
+
+        return chat.choices[0].message.content
+
     except Exception as e:
         return str(e)

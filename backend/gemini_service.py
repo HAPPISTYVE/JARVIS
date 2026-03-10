@@ -2,24 +2,18 @@ import google.generativeai as genai
 import os
 
 def ask_gemini(message, history):
-    # 1. On vérifie si la clé est bien lue
-    api_key = os.getenv("API_KEY") # Vérifie que c'est bien le nom sur Render
+    # Récupère la clé (Assure-toi que le nom API_KEY est le même sur Render)
+    api_key = os.getenv("API_KEY")
+    genai.configure(api_key=api_key)
     
-    if not api_key:
-        print("ERREUR CRITIQUE : La variable API_KEY est vide !")
-        return "Erreur : Clé API manquante dans l'environnement."
-
-    print(f"DEBUG : Tentative avec la clé commençant par : {api_key[:5]}...")
-
     try:
-        genai.configure(api_key=api_key)
+        # Initialisation propre avec le nom officiel
         model = genai.GenerativeModel("gemini-1.5-flash")
         
-        # Test simple sans historique d'abord pour isoler le problème
+        # Envoi simple
         response = model.generate_content(message)
         return response.text.strip()
-
+        
     except Exception as e:
-        # On affiche l'erreur complète pour la voir dans les logs Render
-        print(f"ERREUR DÉTAILLÉE : {type(e).__name__}: {e}")
-        return f"Erreur technique : {type(e).__name__}"
+        print(f"DEBUG LOGS: {e}")
+        return f"Erreur : {e}"

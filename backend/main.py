@@ -20,7 +20,7 @@ def health_check():
 def chat(data: Message):
     try:
         resp = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant"",
             messages=[{"role": "user", "content": data.message}]
         )
         return {"response": resp.choices[0].message.content}

@@ -64,10 +64,23 @@ return (
           <Mic size={18} color={listening ? "red" : "black"} />
         </button>
  
-  <button className="send-btn" onClick={onSend}>  
-    <Send size={18} />  
-  </button>  
-
+   <button
+          onClick={handleSend}
+          style={{
+            marginLeft: "6px",
+            backgroundColor: "#4f46e5",
+            borderRadius: "50%",
+            padding: "8px",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            color: "white",
+          }}
+        >
+          <Send size={18} />
+        </button>
   
 </div>
 

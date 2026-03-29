@@ -1,12 +1,10 @@
 import { Send, Mic, Plus } from "lucide-react";
 import { useState, useRef } from "react";
 
-function InputBar({ onSend }) {
-  const [input, setInput] = useState("");
-  const [listening, setListening] = useState(false);
-  const [file, setFile] = useState(null);
+function InputBar({ input, setInput, onSend }) {
+const [listening, setListening] = useState(false);
 
-  const fileInputRef = useRef(null);
+
 
   // 🎤 Voice recognition
   const handleVoice = () => {

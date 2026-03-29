@@ -68,9 +68,7 @@ return (
     value={input}  
     onChange={(e) => setInput(e.target.value)}  
   />  
-  <button type="button" className="mic-btn" onClick={handleVoice}>  
-    <Mic size={18} color={listening ? "red" : "black"} />  
-  </button>  
+  
   </div>  
 
  <button

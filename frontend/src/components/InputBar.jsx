@@ -1,4 +1,4 @@
-Voici mon input bar import {Send, Mic } from "lucide-react";
+ import {Send, Mic } from "lucide-react";
 import { useState } from "react";
 
 function InputBar({ input, setInput, onSend }) {

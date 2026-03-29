@@ -93,7 +93,7 @@ function InputBar({ onSend }) {
         </button>
 
         {/* 📨 Send */}
-        <button onClick={handleSend} style={{
+        <button type="button" onClick={handleSend} style={{
             marginLeft: "6px",
             backgroundColor: "#4f46e5",
             borderRadius: "50%",

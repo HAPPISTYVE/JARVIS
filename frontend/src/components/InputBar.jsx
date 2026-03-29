@@ -49,26 +49,8 @@ function InputBar({ onSend }) {
   };
 
   return (
-    <div
-      className="input-bar"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: focused ? "#e0e7ff" : "#f3f4f6", // couleur change au focus
-        borderRadius: "16px", // barre arrondie
-        padding: "6px",
-        transition: "background-color 0.2s",
-      }}
-    >
-      <div
-        className="input-wrapper"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          borderRadius: "16px",
-          overflow: "hidden",
-        }}
-      >
+    
+      
         {/* + Bouton fichiers */}
         <button
           type="button"

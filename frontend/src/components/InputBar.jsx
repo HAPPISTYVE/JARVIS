@@ -1,4 +1,4 @@
-import {Send, Mic } from "lucide-react";
+Voici mon input bar import {Send, Mic } from "lucide-react";
 import { useState } from "react";
 
 function InputBar({ input, setInput, onSend }) {
@@ -30,87 +30,25 @@ recognition.onerror = () => {
 };
 
 };
- 
 
-  return (
-    <div className="input-bar" style={{ display: "flex", flexDirection: "column" }}>
-      <div className="input-wrapper" style={{ display: "flex", alignItems: "center" }}>
-        {/* + Bouton fichiers */}
-        <button
-          type="button"
-          onClick={handleAttachClick}
-          style={{
-            marginRight: "6px",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          <Plus size={20} />
-        </button>
-
-        {/* Input caché fichiers */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={(e) => setFile(e.target.files[0])}
-          accept="image/*,.pdf,.txt"
-        />
-  
 return (
 <div className="input-bar">
 <div className="input-wrapper">
 
 <input  
     type="text"  
-    placeholder="Demander à JARVueueueuIS..."  
+    placeholder="Demander à JkkkjkjARVIS..."  
     value={input}  
     onChange={(e) => setInput(e.target.value)}  
   />  
-  
+  <button type="button" className="mic-btn" onClick={handleVoice}>  
+    <Mic size={18} color={listening ? "red" : "black"} />  
+  </button>  
   </div>  
 
- <button
-          type="button"
-          onClick={handleVoice}
-          style={{
-            marginLeft: "6px",
-            backgroundColor: "#f3f4f6",
-            borderRadius: "50%",
-            padding: "6px",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Mic size={18} color={listening ? "red" : "black"} />
-        </button>
-
-
-{/* 📨 Send en bulle */}
-        <button
-          onClick={handleSend}
-          style={{
-            marginLeft: "6px",
-            backgroundColor: "#4f46e5",
-            borderRadius: "50%",
-            padding: "8px",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            color: "white",
-          }}
-        >
-          <Send size={18} />
-        </button>
-      
-
-  
+  <button className="send-btn" onClick={onSend}>  
+    <Send size={18} />  
+  </button>  
 
   
 </div>

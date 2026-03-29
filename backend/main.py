@@ -8,11 +8,6 @@ from protocol_engine import headache_protocol
 from ml_engine import predict
 from pdf_generator import generate_pdf
 from voice_service import speech_to_text  # <-- service micro
-from fastapi import UploadFile, File, Form
-import io
-import pdfplumber
-from PIL import Image
-import pytesseract
 from fastapi.middleware.cors import CORSMiddleware
 import shutil, os
 import uvicorn
@@ -45,54 +40,26 @@ def health():
 
 # --- Chat endpoint ---
 @app.post("/chat")
-async def chat(
-    message: str = Form(...),
-    session_id: str = Form(...),
-    file: UploadFile = File(None)
-):
-    if session_id not in sessions:
-        sessions[session_id] = {"history": [], "patient": Patient()}
+def chat(data: Message):
+if data.session_id not in sessions:
+sessions[data.session_id] = {"history": [], "patient": Patient()}
 
-    session = sessions[session_id]
+session = sessions[data.session_id]  
 
-    try:
-        extracted_text = ""
+try:  
+    # Mise à jour patient  
+    session["patient"] = update_patient(session["patient"], data.message)  
 
-        # 📎 Si fichier envoyé
-        if file:
-            content = await file.read()
+    # Appel à Groq  
+    response = ask_groq(data.message, session["history"])  
 
-            # 📄 PDF
-            if file.content_type == "application/pdf":
-                with pdfplumber.open(io.BytesIO(content)) as pdf:
-                    for page in pdf.pages:
-                        extracted_text += page.extract_text() or ""
+    # Sauvegarde dans l'historique  
+    session["history"].append({"user": data.message, "bot": response})  
 
-            # 🖼️ IMAGE
-            elif "image" in file.content_type:
-                image = Image.open(io.BytesIO(content))
-                extracted_text = pytesseract.image_to_string(image)
+    return {"response": response}  
 
-            # 📄 TXT
-            elif "text" in file.content_type:
-                extracted_text = content.decode("utf-8")
-
-        # 🔥 On combine message + fichier
-        full_message = message + "\n" + extracted_text[:1000]
-
-        # Mise à jour patient
-        session["patient"] = update_patient(session["patient"], full_message)
-
-        # Appel Groq
-        response = ask_groq(full_message, session["history"])
-
-        # Historique
-        session["history"].append({"user": message, "bot": response})
-
-        return {"response": response}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+except Exception as e:  
+    raise HTTPException(status_code=500, detail=str(e))
 # --- Voice endpoint ---
 @app.post("/voice")
 def voice_input(file: UploadFile = File(...)):

@@ -7,7 +7,7 @@ from redflag_engine import evaluate_redflags
 from protocol_engine import headache_protocol
 from ml_engine import predict
 from pdf_generator import generate_pdf
-from voice_service import speech_to_text  # <-- service micro
+from voice_service import speech_to_text
 from fastapi.middleware.cors import CORSMiddleware
 import shutil, os
 import uvicorn
@@ -41,25 +41,33 @@ def health():
 # --- Chat endpoint ---
 @app.post("/chat")
 def chat(data: Message):
-if data.session_id not in sessions:
-sessions[data.session_id] = {"history": [], "patient": Patient()}
+    if data.session_id not in sessions:
+        sessions[data.session_id] = {
+            "history": [],
+            "patient": Patient()
+        }
 
-session = sessions[data.session_id]  
+    session = sessions[data.session_id]
 
-try:  
-    # Mise à jour patient  
-    session["patient"] = update_patient(session["patient"], data.message)  
+    try:
+        # Mise à jour patient
+        session["patient"] = update_patient(session["patient"], data.message)
 
-    # Appel à Groq  
-    response = ask_groq(data.message, session["history"])  
+        # Appel à Groq
+        response = ask_groq(data.message, session["history"])
 
-    # Sauvegarde dans l'historique  
-    session["history"].append({"user": data.message, "bot": response})  
+        # Sauvegarde dans l'historique
+        session["history"].append({
+            "user": data.message,
+            "bot": response
+        })
 
-    return {"response": response}  
+        return {"response": response}
 
-except Exception as e:  
-    raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # --- Voice endpoint ---
 @app.post("/voice")
 def voice_input(file: UploadFile = File(...)):
@@ -68,6 +76,7 @@ def voice_input(file: UploadFile = File(...)):
     """
     try:
         file_location = f"temp_{file.filename}"
+
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
@@ -76,10 +85,12 @@ def voice_input(file: UploadFile = File(...)):
 
         if text is None:
             return {"text": "", "error": "Impossible de reconnaître le texte"}
+
         return {"text": text}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # --- Finalize endpoint ---
 @app.post("/finalize/{session_id}")
@@ -111,10 +122,8 @@ def finalize(session_id: str):
     pdf_path = f"rapport_{session_id}.pdf"
     generate_pdf(result, pdf_path)
 
-    # Optionnel : nettoyage de la session
-    # del sessions[session_id]
-
     return result
+
 
 # --- Run server ---
 if __name__ == "__main__":

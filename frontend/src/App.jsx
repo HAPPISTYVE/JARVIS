@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setLoadingScreen(false);
-    }, 6000);
+    }, 2000);
   }, []);
 
   if (loadingScreen) return <SplashScreen />;

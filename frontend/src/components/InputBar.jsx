@@ -69,22 +69,14 @@ style={{ marginRight: "6px", background: "transparent", border: "none", cursor: 
     />  
 
     {/* Input texte */}  
-    <textarea
-  placeholder="Demander à JARVIS..."
-  value={input}
-  onChange={(e) => {
-    setInput(e.target.value);
-    e.target.style.height = "auto";
-    e.target.style.height = e.target.scrollHeight + "px";
-  }}
-  style={{
-    flex: 1,
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "8px",
-    overflow: "hidden"
-  }}
-/>
+/* Input texte */}
+<input
+type="text"
+placeholder="Demander à JARVIS..."
+value={input}
+onChange={(e) => setInput(e.target.value)}
+style={{ flex: 1, padding: "12px 14px", height: "50px", fontSize: "16px" }}
+
 
     {/* 🎤 Micro */}  
     <button type="button" onClick={handleVoice} style={{

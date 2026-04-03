@@ -75,7 +75,7 @@ type="text"
 placeholder="Demander à JARVIS..."
 value={input}
 onChange={(e) => setInput(e.target.value)}
-style={{ flex: 1, padding: "6px 8px" }}
+style={{ flex: 1, padding: "12px 16px", height: "44px", fontSize: "16px" }}
 />
 
 

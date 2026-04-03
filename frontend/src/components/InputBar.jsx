@@ -56,7 +56,7 @@ type="button"
 onClick={handleAttachClick}
 style={{ marginRight: "6px", background: "transparent", border: "none", cursor: "pointer" }}
 >
-<Plus size={20} />
+<Plus size={23} />
 </button>
 
 {/* Input caché fichiers */}  
@@ -107,7 +107,7 @@ style={{ flex: 1, padding: "12px 16px", height: "40px", fontSize: "16px" }}
             cursor: "pointer",
             color: "white",
           }}>  
-      <Send size={20} />  
+      <Send size={23} />  
     </button>  
   </div>  
 

@@ -14,7 +14,7 @@ threadpoolctl==3.2.0
 # --- PDF generation ---
 reportlab==4.4.10
 pillow==12.1.1
-httpx==0.24.1
+
 # --- Reconnaissance vocale ---
 SpeechRecognition==3.14.5
 

@@ -1,15 +1,17 @@
 import { useEffect, useRef } from "react";
 import Message from "./Message";
-import Loader from "./Loader";
+import TypingDots from "./TypingDots";
 
 function ChatBox({ messages, loading }) {
-   const bottomRef = useRef(null);
-   useEffect(() => {
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  return(
-        <div className="chat-box">
+  return (
+    <div className="chat-box">
+
       {messages.length === 1 && (
         <div className="welcome-center">
           <h2>Que puis-je faire pour vous aujourd'hui?</h2>
@@ -18,20 +20,20 @@ function ChatBox({ messages, loading }) {
             <button>Coder & Pirater</button>
             <button>Rechercher</button>
             <button>Apprendre</button>
-            </div>
-            </div>
+          </div>
+        </div>
       )}
-      
-    
- 
+
       {messages.map((msg, index) => (
         <Message key={index} role={msg.role} text={msg.text} />
       ))}
-      {loading && <Loader />}
+
+      {/* 👉 TES 3 POINTS */}
+      {loading && <TypingDots />}
+
       <div ref={bottomRef}></div>
     </div>
   );
 }
 
 export default ChatBox;
-

@@ -1,36 +1,27 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from pydantic import BaseModel
+import shutil, os, uvicorn
+
 from models import Patient
-from groq_service import ask_groq
+from groq_service import ask_groq, warmup
 from conversation_engine import update_patient
 from redflag_engine import evaluate_redflags
 from protocol_engine import headache_protocol
 from ml_engine import predict
 from pdf_generator import generate_pdf
 from voice_service import speech_to_text
-from fastapi.middleware.cors import CORSMiddleware
-import shutil, os
-import uvicorn
 
-app = FastAPI(title="JARVIS Medical API")
 
-@app.on_event("startup")
-async def warmup_groq():
-    """
-    Appelé UNE SEULE FOIS au démarrage du serveur.
-    Force la connexion vers Groq avant le premier utilisateur.
-    """
-    from groq_service import client
+# ✅ Lifespan = exécuté dans CHAQUE worker
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    warmup()
+    yield
 
-    try:
-        client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": "ping"}],
-            max_tokens=1
-        )
-        print("✅ Groq connection warm and ready")
-    except Exception as e:
-        print("❌ Warmup failed:", e)
+
+app = FastAPI(title="JARVIS Medical API", lifespan=lifespan)
 
 # --- CORS pour React ---
 app.add_middleware(
@@ -68,13 +59,10 @@ def chat(data: Message):
     session = sessions[data.session_id]
 
     try:
-        # Mise à jour patient
         session["patient"] = update_patient(session["patient"], data.message)
 
-        # Appel à Groq
         response = ask_groq(data.message, session["history"])
 
-        # Sauvegarde dans l'historique
         session["history"].append({
             "user": data.message,
             "bot": response
@@ -89,9 +77,6 @@ def chat(data: Message):
 # --- Voice endpoint ---
 @app.post("/voice")
 def voice_input(file: UploadFile = File(...)):
-    """
-    Reçoit un fichier audio et renvoie le texte reconnu
-    """
     try:
         file_location = f"temp_{file.filename}"
 
@@ -119,7 +104,6 @@ def finalize(session_id: str):
     session = sessions[session_id]
     patient = session["patient"]
 
-    # Triage
     patient.triage_level = evaluate_redflags(patient)
 
     features = [

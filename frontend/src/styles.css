@@ -1,33 +1,30 @@
-/* JARVIS UI - PROFESSIONAL CORE 
-  Theme: Cyber-Tech / Futuristic Glass
+/* 
+  JARVIS FULLSCREEN CORE - RECTANGULAR EDITION
+  Optimisé pour l'immersion totale 
 */
 
 :root {
   --primary-glow: #6366f1;
-  --secondary-glow: #0ea5e9;
-  --glass-bg: rgba(15, 23, 42, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
   --accent-cyan: #22d3ee;
+  --glass-bg: rgba(10, 15, 28, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text-main: #f1f5f9;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
-/* FOND DYNAMIQUE */
+/* FULLSCREEN SETUP */
 body {
-  background: #050a14;
+  width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0;
   overflow: hidden;
-  color: var(--text-main);
+  background: #020617;
 }
 
 body::before {
@@ -35,210 +32,140 @@ body::before {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15), transparent 60%),
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
     url('./assets/Jarvis_interface.webp') center/cover no-repeat;
   z-index: -1;
-  filter: brightness(0.7) contrast(1.1);
 }
 
-/* CONTAINER PRINCIPAL */
+/* CONTAINER TOTAL */
 .app {
-  width: 95vw;
-  max-width: 1300px;
-  height: 92vh;
-  background: var(--glass-bg);
-  backdrop-filter: blur(15px) saturate(160%);
-  -webkit-backdrop-filter: blur(15px) saturate(160%);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
-  box-shadow: 
-    0 0 40px rgba(0, 0, 0, 0.5),
-    inset 0 0 20px rgba(99, 102, 241, 0.05);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px) saturate(140%);
+  /* Bordure rectangulaire fine */
+  border: 1px solid var(--glass-border);
 }
 
-/* HEADER STYLE PRO */
+/* HEADER */
 .header {
-  padding: 24px 40px;
+  padding: 25px 50px;
   border-bottom: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.02);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .header h1 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 3px;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  background: linear-gradient(to right, #fff, var(--accent-cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3));
+  color: white;
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
 }
 
-.header p {
-  font-size: 0.75rem;
-  color: var(--accent-cyan);
-  opacity: 0.8;
-  font-family: monospace;
-}
-
-/* CHAT AREA */
+/* ZONE DE CHAT */
 .chat-box {
   flex: 1;
-  padding: 40px;
+  padding: 40px 15%; /* Centrage optique */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--glass-border) transparent;
 }
 
-/* SCROLLBAR CUSTOM */
-.chat-box::-webkit-scrollbar { width: 6px; }
-.chat-box::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
-  border-radius: 10px;
-}
-
-/* MESSAGES */
 .message {
   max-width: 70%;
-  padding: 16px 22px;
-  border-radius: 18px;
-  font-size: 0.95rem;
+  padding: 18px 24px;
+  font-size: 1rem;
   line-height: 1.6;
-  position: relative;
-  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Style plus angulaire */
+  border-radius: 4px; 
 }
 
 .message.user {
   align-self: flex-end;
-  background: linear-gradient(135deg, var(--primary-glow), #4f46e5);
-  color: white;
-  border-bottom-right-radius: 4px;
-  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.85);
+  border-right: 4px solid var(--accent-cyan);
 }
 
 .message.ai {
   align-self: flex-start;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--glass-border);
-  color: var(--text-main);
-  border-bottom-left-radius: 4px;
-  backdrop-filter: blur(5px);
+  border-left: 4px solid var(--accent-cyan);
 }
 
-/* INPUT BAR FUTURISTE */
-.input-bar {
-  padding: 30px 40px;
-  background: rgba(0, 0, 0, 0.2);
-  border-top: 1px solid var(--glass-border);
+/* ZONE SUGGESTIONS AGRANDIE */
+.suggestions {
   display: flex;
   gap: 15px;
-  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.suggestions button {
+  padding: 12px 24px; /* Plus grand */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-cyan);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.3s;
+  border-radius: 2px; /* Presque carré */
+}
+
+.suggestions button:hover {
+  background: var(--accent-cyan);
+  color: black;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+}
+
+/* BARRE DE MESSAGE AGRANDIE */
+.input-bar {
+  padding: 40px 15%; /* Plus haute et alignée */
+  background: rgba(5, 10, 20, 0.9);
+  border-top: 1px solid var(--glass-border);
 }
 
 .input-wrapper {
   position: relative;
-  flex: 1;
+  width: 100%;
 }
 
 .input-bar input {
   width: 100%;
-  padding: 16px 25px;
-  padding-right: 60px;
-  border-radius: 50px;
+  padding: 20px 30px; /* Saisie beaucoup plus large */
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--glass-border);
-  background: rgba(15, 23, 42, 0.6);
   color: white;
-  font-size: 0.95rem;
   outline: none;
-  transition: all 0.3s ease;
+  border-radius: 4px; /* Rectangulaire */
+  transition: 0.3s;
 }
 
 .input-bar input:focus {
-  border-color: var(--primary-glow);
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
-  background: rgba(15, 23, 42, 0.8);
+  border-color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.1);
 }
 
-/* BOUTON MICRO / ENVOI */
 .mic-btn {
   position: absolute;
-  right: 20px;
+  right: 25px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--accent-cyan);
   cursor: pointer;
-  transition: 0.2s;
-  display: flex;
-  align-items: center;
+  font-size: 1.2rem;
 }
 
-.mic-btn:hover {
-  filter: drop-shadow(0 0 5px var(--accent-cyan));
-  scale: 1.1;
-}
-
-/* SUGGESTIONS */
-.suggestions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.suggestions button {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: var(--text-muted);
-  padding: 8px 16px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: 0.3s;
-}
-
-.suggestions button:hover {
-  background: var(--glass-border);
-  color: white;
-  border-color: var(--accent-cyan);
-}
-
-/* ANIMATIONS */
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* LOADER / TYPING */
-.typing-bubble {
-  display: flex;
-  gap: 5px;
-  padding: 10px 15px;
-}
-
-.typing-bubble span {
-  width: 6px;
-  height: 6px;
-  background: var(--accent-cyan);
-  border-radius: 50%;
-  animation: wave 1.5s infinite ease-in-out;
-  box-shadow: 0 0 5px var(--accent-cyan);
-}
-
-.typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
-.typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes wave {
-  0%, 100% { transform: translateY(0); opacity: 0.3; }
-  50% { transform: translateY(-5px); opacity: 1; }
-}
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); }

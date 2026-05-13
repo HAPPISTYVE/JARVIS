@@ -1,30 +1,30 @@
-/* 
-  JARVIS FULLSCREEN CORE - RECTANGULAR EDITION
-  Optimisé pour l'immersion totale 
-*/
+/* JARVIS UI - FULLSCREEN EDITION */
 
 :root {
   --primary-glow: #6366f1;
-  --accent-cyan: #22d3ee;
-  --glass-bg: rgba(10, 15, 28, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  --secondary-glow: #0ea5e9;
+  --glass-bg: rgba(15, 23, 42, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-cyan: #22d3ee;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* FULLSCREEN SETUP */
+/* FOND DYNAMIQUE - OCCUPE TOUT L'ÉCRAN */
 body {
-  width: 100vw;
+  background: #050a14;
   height: 100vh;
-  margin: 0;
+  width: 100vw;
+  display: flex;
   overflow: hidden;
-  background: #020617;
+  color: var(--text-main);
 }
 
 body::before {
@@ -32,103 +32,86 @@ body::before {
   position: fixed;
   inset: 0;
   background: 
-    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15), transparent 60%),
     url('./assets/Jarvis_interface.webp') center/cover no-repeat;
   z-index: -1;
+  filter: brightness(0.7) contrast(1.1);
 }
 
-/* CONTAINER TOTAL */
+/* CONTAINER PRINCIPAL - 100% DE LA FENÊTRE */
 .app {
   width: 100vw;
   height: 100vh;
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px) saturate(160%);
+  -webkit-backdrop-filter: blur(15px) saturate(160%);
+  border: none; /* Suppression des bordures pour le mode plein écran */
   display: flex;
   flex-direction: column;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px) saturate(140%);
-  /* Bordure rectangulaire fine */
-  border: 1px solid var(--glass-border);
+  position: relative;
 }
 
 /* HEADER */
 .header {
-  padding: 25px 50px;
+  padding: 24px 50px;
   border-bottom: 1px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header h1 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 800;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: white;
-  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(to right, #fff, var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* ZONE DE CHAT */
+/* CHAT AREA - AJUSTÉE POUR ÉCRANS LARGES */
 .chat-box {
   flex: 1;
-  padding: 40px 15%; /* Centrage optique */
+  padding: 40px 10%; /* Padding latéral pour ne pas étirer le texte à l'infini */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* MESSAGES */
 .message {
-  max-width: 70%;
-  padding: 18px 24px;
+  max-width: 75%;
+  padding: 16px 22px;
+  border-radius: 12px;
   font-size: 1rem;
   line-height: 1.6;
-  /* Style plus angulaire */
-  border-radius: 4px; 
+  animation: slideIn 0.4s ease-out;
 }
 
 .message.user {
   align-self: flex-end;
-  background: rgba(99, 102, 241, 0.85);
-  border-right: 4px solid var(--accent-cyan);
+  background: linear-gradient(135deg, var(--primary-glow), #4f46e5);
+  border-bottom-right-radius: 2px;
 }
 
 .message.ai {
   align-self: flex-start;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid var(--glass-border);
-  border-left: 4px solid var(--accent-cyan);
+  border-bottom-left-radius: 2px;
 }
 
-/* ZONE SUGGESTIONS AGRANDIE */
-.suggestions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  padding: 15px 0;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.suggestions button {
-  padding: 12px 24px; /* Plus grand */
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: var(--accent-cyan);
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: 0.3s;
-  border-radius: 2px; /* Presque carré */
-}
-
-.suggestions button:hover {
-  background: var(--accent-cyan);
-  color: black;
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
-}
-
-/* BARRE DE MESSAGE AGRANDIE */
+/* BARRE D'ENTRÉE - CENTRÉE ET LARGE */
 .input-bar {
-  padding: 40px 15%; /* Plus haute et alignée */
-  background: rgba(5, 10, 20, 0.9);
+  padding: 40px 10%;
+  background: rgba(0, 0, 0, 0.4);
   border-top: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .input-wrapper {
@@ -138,22 +121,46 @@ body::before {
 
 .input-bar input {
   width: 100%;
-  padding: 20px 30px; /* Saisie beaucoup plus large */
-  font-size: 1.1rem;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 18px 30px;
+  padding-right: 60px;
+  border-radius: 12px;
   border: 1px solid var(--glass-border);
+  background: rgba(15, 23, 42, 0.8);
   color: white;
+  font-size: 1.1rem;
   outline: none;
-  border-radius: 4px; /* Rectangulaire */
   transition: 0.3s;
 }
 
 .input-bar input:focus {
   border-color: var(--accent-cyan);
-  background: rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.1);
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
 }
 
+/* SUGGESTIONS */
+.suggestions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.suggestions button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-cyan);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.suggestions button:hover {
+  background: var(--accent-cyan);
+  color: #000;
+}
+
+/* MICRO */
 .mic-btn {
   position: absolute;
   right: 25px;
@@ -163,9 +170,10 @@ body::before {
   border: none;
   color: var(--accent-cyan);
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-thumb { background: var(--glass-border); }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

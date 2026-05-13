@@ -1,4 +1,6 @@
-/* JARVIS UI - FULLSCREEN EDITION */
+/* JARVIS UI - PROFESSIONAL CORE 
+  Theme: Cyber-Tech / Futuristic Glass
+*/
 
 :root {
   --primary-glow: #6366f1;
@@ -17,12 +19,13 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* FOND DYNAMIQUE - OCCUPE TOUT L'ÉCRAN */
+/* FOND DYNAMIQUE */
 body {
   background: #050a14;
   height: 100vh;
-  width: 100vw;
   display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   color: var(--text-main);
 }
@@ -38,7 +41,7 @@ body::before {
   filter: brightness(0.7) contrast(1.1);
 }
 
-/* CONTAINER PRINCIPAL - 100% DE LA FENÊTRE */
+/* CONTAINER PRINCIPAL */
 .app {
   width: 100vw;
   height: 100vh;
@@ -51,129 +54,186 @@ body::before {
   position: relative;
 }
 
-/* HEADER */
+/* HEADER STYLE PRO */
 .header {
-  padding: 24px 50px;
+  padding: 24px 40px;
   border-bottom: 1px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.02);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .header h1 {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   background: linear-gradient(to right, #fff, var(--accent-cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3));
 }
 
-/* CHAT AREA - AJUSTÉE POUR ÉCRANS LARGES */
+.header p {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  opacity: 0.8;
+  font-family: monospace;
+}
+
+/* CHAT AREA */
 .chat-box {
   flex: 1;
-  padding: 40px 10%; /* Padding latéral pour ne pas étirer le texte à l'infini */
+  padding: 40px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+/* SCROLLBAR CUSTOM */
+.chat-box::-webkit-scrollbar { width: 6px; }
+.chat-box::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
 }
 
 /* MESSAGES */
 .message {
-  max-width: 75%;
+  max-width: 70%;
   padding: 16px 22px;
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: 18px;
+  font-size: 0.95rem;
   line-height: 1.6;
-  animation: slideIn 0.4s ease-out;
+  position: relative;
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .message.user {
   align-self: flex-end;
   background: linear-gradient(135deg, var(--primary-glow), #4f46e5);
-  border-bottom-right-radius: 2px;
+  color: white;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
 }
 
 .message.ai {
   align-self: flex-start;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid var(--glass-border);
-  border-bottom-left-radius: 2px;
+  color: var(--text-main);
+  border-bottom-left-radius: 4px;
+  backdrop-filter: blur(5px);
 }
 
-/* BARRE D'ENTRÉE - CENTRÉE ET LARGE */
+/* INPUT BAR FUTURISTE */
 .input-bar {
-  padding: 40px 10%;
-  background: rgba(0, 0, 0, 0.4);
+  padding: 30px 40px;
+  background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--glass-border);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 15px;
+  align-items: center;
 }
 
 .input-wrapper {
   position: relative;
-  width: 100%;
+  flex: 1;
 }
 
 .input-bar input {
   width: 100%;
-  padding: 18px 30px;
+  padding: 16px 25px;
   padding-right: 60px;
-  border-radius: 12px;
+  border-radius: 50px;
   border: 1px solid var(--glass-border);
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.6);
   color: white;
-  font-size: 1.1rem;
+  font-size: 14px;
   outline: none;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .input-bar input:focus {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+  border-color: var(--primary-glow);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+  background: rgba(15, 23, 42, 0.8);
 }
 
-/* SUGGESTIONS */
-.suggestions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.suggestions button {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: var(--accent-cyan);
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: 0.3s;
-}
-
-.suggestions button:hover {
-  background: var(--accent-cyan);
-  color: #000;
-}
-
-/* MICRO */
+/* BOUTON MICRO / ENVOI */
 .mic-btn {
   position: absolute;
-  right: 25px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--accent-cyan);
   cursor: pointer;
-  font-size: 1.4rem;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
 }
 
+.mic-btn:hover {
+  filter: drop-shadow(0 0 5px var(--accent-cyan));
+  scale: 1.1;
+}
+
+/* SUGGESTIONS */
+.suggestions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.suggestions button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  padding: 8px 12px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.3s;
+}
+
+.suggestions button:hover {
+  background: var(--glass-border);
+  color: white;
+  border-color: var(--accent-cyan);
+}
+
+/* ANIMATIONS */
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* LOADER / TYPING */
+.typing-bubble {
+  display: flex;
+  gap: 5px;
+  padding: 10px 15px;
+}
+
+.typing-bubble span {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  animation: wave 1.5s infinite ease-in-out;
+  box-shadow: 0 0 5px var(--accent-cyan);
+}
+
+.typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-5px); opacity: 1; }
 }

@@ -22,19 +22,7 @@ body {
 }
 
 /* APP CONTAINER - EFFET GLASSMORPHISM */
-.app {
-  width: 100%;
-  margin: 0 auto;
-  padding: 15px;
-  height: 95vh;
-  display: flex;
-  flex-direction: column;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(30px); /* Flou sur le background */
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 0;
-  overflow: hidden;
-}
+
 
 /* HEADER */
 .header {

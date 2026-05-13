@@ -1,3 +1,4 @@
+/* RESET & BASE */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,24 +9,21 @@
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  background: radial-gradient(
-      circle at 20% 10%,
-      rgba(37, 99, 235, 0.15) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(59, 130, 246, 0.12) 0%,
-      transparent 40%
-    ),
-    #f8fafc;
+  /* BACKGROUND ANIMÉ : On ajoute un overlay sombre pour la lisibilité */
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+              url('./assets/ton-animation.webp'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #f8fafc;
+  min-height: 100vh;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* APP CONTAINER */
+/* APP CONTAINER - EFFET GLASSMORPHISM */
 .app {
   width: 100%;
   margin: 0 auto;
@@ -33,33 +31,33 @@ body {
   height: 95vh;
   display: flex;
   flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px); /* Flou sur le background */
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 0;
-  box-shadow: none;
   overflow: hidden;
 }
 
-
 /* HEADER */
-
 .header {
   padding: 20px 30px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header h1 {
   font-size: 20px;
   font-weight: 600;
-  color: #1e293b;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .header p {
   font-size: 13px;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 4px;
 }
 
 /* CHAT AREA */
-
 .chat-box {
   flex: 1;
   padding: 30px;
@@ -69,535 +67,133 @@ body {
   gap: 14px;
 }
 
-/* MESSAGE */
-
+/* MESSAGE BASE */
 .message {
-  max-width: 70%;
+  max-width: 75%;
   padding: 14px 18px;
   border-radius: 18px;
   font-size: 14px;
   line-height: 1.5;
-  animation: fadeIn 0.2s ease-in-out;
 }
 
-/* USER MESSAGE */
-
+/* USER MESSAGE (Bleu JARVIS) */
 .message.user {
   align-self: flex-end;
   background: #6366f1;
   color: white;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
-/* AI MESSAGE */
-
+/* AI MESSAGE (Transparent / Sombre) */
 .message.ai {
   align-self: flex-start;
-  background: #f1f5f9;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  color: #222;
-  border-bottom-left-radius: 6px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border-bottom-left-radius: 4px;
 }
 
 /* INPUT AREA */
-
 .input-bar {
-   padding: 20px 16px
-  border-top: 1px solid #e5e7eb;
+  padding: 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   gap: 12px;
-  background:transparent;
+  background: transparent;
 }
 
-.input-wrapper{
+.input-wrapper {
   display: flex;
   align-items: center;
-
   position: relative;
   flex: 1;
 }
-.input-wrapper input{
-  width: 100%;
-  padding: 14px 45px 14px 18px;
-}
-
 
 .input-bar input {
-  flex: 1;
-  padding: 14px 20px;
-  border-radius: 30px;
-  border: 1px solid #e0e3e8;
-  background: #f4f6fb;
-  font-size: 14px;
-  outline: none;
-  transition: 0.2s;
-}
-.input-bar input::placeholder{
-  color:#9aa0a6;
-}
-
-.input-bar input:focus {
-  background: #ffffff;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-.disclaimer {
-  font-size: 12px;
-  color:#b0b3b8;
-  text-align: center;
-  padding: 8px;
-  opacity: 0.7;
-  
-}
-
-/* WELCOME CENTER */
-.welcome-center {
-  text-align: center;
-  margin-top: 40px;
-  padding: 15px;
-  color: #475569;
-}
-
-.welcome-center h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1e293b;
-}
-
-/* SUGGESTIONS */
-.suggestions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.suggestions button {
-  padding: 8px 12px;
-  border-radius: 25px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s ease;
-}
-
-.suggestions button:hover {
-  background: #f1f5f9;
-  transform: translateY(-2px);
-}
-
-.message.ai,
-.message.user{
-  animation: fadeIn 0.25s ease;
-}
-@keyframes fadeIn {
-  from{
-    opacity: 0;
-    transition: translateY(6px);
-  }
-  to{
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-}
-
-.mic-btn {
- position:absolute;
- right: 20px;
- top: 30%;
- display: flex;
- align-items: center;
- justify-content: center;
- transform: translateY(-50);
- background: transparent;
- border: none;
- cursor: pointer;
-}
-
-.mic-btn:hover {
-  background: #e6e9f2;
-}
-
-
-
-/* SEND BUTTON */
-
-.send-btn {
-  * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
-}
-
-body {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  background: radial-gradient(
-      circle at 20% 10%,
-      rgba(37, 99, 235, 0.15) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(59, 130, 246, 0.12) 0%,
-      transparent 40%
-    ),
-    #f8fafc;
-}
-
-#root {
-  min-height: 100vh;
-}
-
-/* APP CONTAINER */
-.app {
   width: 100%;
-  margin: 0 auto;
-  padding: 15px;
-  height: 95vh;
-  display: flex;
-  flex-direction: column;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: hidden;
-}
-
-
-/* HEADER */
-
-.header {
-  padding: 20px 30px;
-  border-bottom: 1px solid #eee;
-}
-
-.header h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.header p {
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 4px;
-}
-
-/* CHAT AREA */
-
-.chat-box {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* MESSAGE */
-
-.message {
-  max-width: 70%;
-  padding: 14px 18px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.5;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-/* USER MESSAGE */
-
-.message.user {
-  align-self: flex-end;
-  background: #6366f1;
+  padding: 14px 45px 14px 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
   color: white;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  border-bottom-right-radius: 6px;
-}
-
-/* AI MESSAGE */
-
-.message.ai {
-  align-self: flex-start;
-  background: #f1f5f9;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  color: #222;
-  border-bottom-left-radius: 6px;
-}
-
-/* INPUT AREA */
-
-.input-bar {
-   padding: 20px 16px
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  gap: 12px;
-  background:transparent;
-}
-
-.input-wrapper{
-  display: flex;
-  align-items: center;
-
-  position: relative;
-  flex: 1;
-}
-.input-wrapper input{
-  width: 100%;
-  padding: 14px 45px 14px 18px;
-}
-
-
-.input-bar input {
-  flex: 1;
-  padding: 14px 20px;
-  border-radius: 30px;
-  border: 1px solid #e0e3e8;
-  background: #f4f6fb;
   font-size: 14px;
   outline: none;
-  transition: 0.2s;
+  transition: 0.3s;
 }
-.input-bar input::placeholder{
-  color:#9aa0a6;
+
+.input-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .input-bar input:focus {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
   border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-.disclaimer {
-  font-size: 12px;
-  color:#b0b3b8;
-  text-align: center;
-  padding: 8px;
-  opacity: 0.7;
-  
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-/* WELCOME CENTER */
+/* WELCOME & SUGGESTIONS */
 .welcome-center {
   text-align: center;
   margin-top: 40px;
-  padding: 15px;
-  color: #475569;
-}
-
-.welcome-center h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1e293b;
-}
-
-/* SUGGESTIONS */
-.suggestions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  color: #cbd5e1;
 }
 
 .suggestions button {
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 25px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
   cursor: pointer;
   font-size: 13px;
-  transition: 0.2s ease;
-}
-
-.suggestions button:hover {
-  background: #f1f5f9;
-  transform: translateY(-2px);
-}
-
-.message.ai,
-.message.user{
-  animation: fadeIn 0.25s ease;
-}
-@keyframes fadeIn {
-  from{
-    opacity: 0;
-    transition: translateY(6px);
-  }
-  to{
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-}
-
-
-
-/* SEND BUTTON */
-
-
-
-/* LOADER */
-
-.loader {
-  width: 30px;
-  height: 10px;
-  border-radius: 20px;
-  background: #ddd;
-  animation: pulse 1s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* --- Style pour les réponses de l'IA (JARVIS) --- */
-
-.markdown-content {
-  text-align: justify;      /* Aligne le texte à gauche et à droite */
-  line-height: 1.6;         /* Espace les lignes pour plus de clarté */
-  word-wrap: break-word;    /* Évite que les longs calculs dépassent */
-  hyphens: auto;            /* Coupe les mots proprement si besoin */
-}
-
-/* Espacement entre les paragraphes */
-.markdown-content p {
-  margin-bottom: 12px;
-}
-
-/* Style des listes (pour tes calculs comptables) */
-.markdown-content ul {
-  margin: 10px 0;
-  padding-left: 25px;       /* Décale les puces vers la droite */
-  text-align: left;         /* Les listes restent alignées à gauche (plus lisible) */
-}
-
-.markdown-content li {
-  margin-bottom: 8px;       /* Espace entre chaque point de calcul */
-}
-
-/* Met les titres en gras bien visibles */
-.markdown-content strong {
-  font-weight: 700;
-  color: inherit;           /* Garde la couleur du texte actuelle */
-}
   transition: 0.2s;
 }
 
-.send-btn:hover {
-  transform: scale(1.05);
+.suggestions button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
-/* LOADER */
-
-.loader {
-  width: 30px;
-  height: 10px;
-  border-radius: 20px;
-  background: #ddd;
-  animation: pulse 1s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+/* ANIMATIONS */
+.message.ai, .message.user {
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* --- Style pour les réponses de l'IA (JARVIS) --- */
-
-.markdown-content {
-  text-align: justify;      /* Aligne le texte à gauche et à droite */
-  line-height: 1.6;         /* Espace les lignes pour plus de clarté */
-  word-wrap: break-word;    /* Évite que les longs calculs dépassent */
-  hyphens: auto;            /* Coupe les mots proprement si besoin */
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Espacement entre les paragraphes */
-.markdown-content p {
-  margin-bottom: 12px;
-}
-
-/* Style des listes (pour tes calculs comptables) */
-.markdown-content ul {
-  margin: 10px 0;
-  padding-left: 25px;       /* Décale les puces vers la droite */
-  text-align: left;         /* Les listes restent alignées à gauche (plus lisible) */
-}
-
-.markdown-content li {
-  margin-bottom: 8px;       /* Espace entre chaque point de calcul */
-}
-
-/* Met les titres en gras bien visibles */
-.markdown-content strong {
-  font-weight: 700;
-  color: inherit;           /* Garde la couleur du texte actuelle */
-}
-
+/* TYPING BUBBLE */
 .typing-bubble {
   display: inline-flex;
-  gap: 6px;
-  padding: 10px 14px;
-  background: transparent;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.5);
   border-radius: 20px;
-  width: fit-content;
 }
 
 .typing-bubble span {
-  width: 8px;
-  height: 8px;
-  background: #555;
+  width: 6px;
+  height: 6px;
+  background: #94a3b8;
   border-radius: 50%;
-  animation: bounce 1.2s infinite ease-in-out;
-}
-
-.typing-bubble span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-bubble span:nth-child(3) {
-  animation-delay: 0.4s;
+  animation: bounce 1.4s infinite ease-in-out;
 }
 
 @keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-  40% { transform: scale(1); opacity: 1; }
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 }
+
+.mic-btn {
+  position: absolute;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.mic-btn:hover { opacity: 1; }

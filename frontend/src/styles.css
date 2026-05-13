@@ -30,8 +30,8 @@ body {
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px); /* Flou sur le background */
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(3px); /* Flou sur le background */
+  -webkit-backdrop-filter: blur(3px);
   border-radius: 0;
   overflow: hidden;
 }
@@ -141,7 +141,7 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-
+}
 .suggestions button {
   padding: 8px 16px;
   border-radius: 25px;

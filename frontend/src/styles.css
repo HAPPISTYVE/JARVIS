@@ -199,7 +199,7 @@ body::before {
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .suggestions button {
@@ -247,4 +247,34 @@ body::before {
 @keyframes wave {
   0%, 100% { transform: translateY(0); opacity: 0.3; }
   50% { transform: translateY(-5px); opacity: 1; }
+}
+/* --- Style pour les réponses de l'IA (JARVIS) --- */
+
+.markdown-content {
+  text-align: justify;      /* Aligne le texte à gauche et à droite */
+  line-height: 1.6;         /* Espace les lignes pour plus de clarté */
+  word-wrap: break-word;    /* Évite que les longs calculs dépassent */
+  hyphens: auto;            /* Coupe les mots proprement si besoin */
+}
+
+/* Espacement entre les paragraphes */
+.markdown-content p {
+  margin-bottom: 12px;
+}
+
+/* Style des listes (pour tes calculs comptables) */
+.markdown-content ul {
+  margin: 10px 0;
+  padding-left: 25px;       /* Décale les puces vers la droite */
+  text-align: left;         /* Les listes restent alignées à gauche (plus lisible) */
+}
+
+.markdown-content li {
+  margin-bottom: 8px;       /* Espace entre chaque point de calcul */
+}
+
+/* Met les titres en gras bien visibles */
+.markdown-content strong {
+  font-weight: 700;
+  color: inherit;           /* Garde la couleur du texte actuelle */
 }

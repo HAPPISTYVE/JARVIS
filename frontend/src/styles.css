@@ -131,11 +131,11 @@ body::before {
 
 /* INPUT BAR FUTURISTE */
 .input-bar {
-  padding: 30px 40px;
+  padding: 20px 16px;
   background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--glass-border);
   display: flex;
-  gap: 15px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -162,6 +162,13 @@ body::before {
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
   background: rgba(15, 23, 42, 0.8);
 }
+.disclaimer {
+  font-size: 12px;
+  color:#b0b3b8;
+  text-align: center;
+  padding: 8px;
+  opacity: 0.7;
+}
 
 /* BOUTON MICRO / ENVOI */
 .mic-btn {
@@ -182,6 +189,9 @@ body::before {
   filter: drop-shadow(0 0 5px var(--accent-cyan));
   scale: 1.1;
 }
+.welcome-center{
+  margin-top: 20px
+}
 
 /* SUGGESTIONS */
 .suggestions {
@@ -189,6 +199,7 @@ body::before {
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 .suggestions button {

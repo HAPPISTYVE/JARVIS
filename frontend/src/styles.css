@@ -31,7 +31,7 @@ body {
   flex-direction: column;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(3px); /* Flou sur le background */
-  -webkit-backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 0;
   overflow: hidden;
 }

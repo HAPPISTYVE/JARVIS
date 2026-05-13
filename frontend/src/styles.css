@@ -1,3 +1,4 @@
+/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,27 +6,34 @@
   font-family: "Inter", sans-serif;
 }
 
+/* BACKGROUND WEBP ANIMÉ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("/Jarvis_interface.webp") center/cover no-repeat;
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 20, 0.65);
+  backdrop-filter: blur(6px);
+  z-index: -1;
+}
+
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
-  background: radial-gradient(
-      circle at 20% 10%,
-      rgba(37, 99, 235, 0.15) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(59, 130, 246, 0.12) 0%,
-      transparent 40%
-    ),
-    #f8fafc;
+  color: #e2e8f0;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* APP CONTAINER */
+/* APP CONTAINER (GLASS) */
 .app {
   width: 100%;
   margin: 0 auto;
@@ -33,33 +41,31 @@ body {
   height: 95vh;
   display: flex;
   flex-direction: column;
-  border-radius: 0;
-  box-shadow: none;
   overflow: hidden;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-
 /* HEADER */
-
 .header {
   padding: 20px 30px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .header h1 {
   font-size: 20px;
   font-weight: 600;
-  color: #1e293b;
+  color: #ffffff;
 }
 
 .header p {
   font-size: 13px;
-  color: #64748b;
-  margin-top: 4px;
+  color: #94a3b8;
 }
 
 /* CHAT AREA */
-
 .chat-box {
   flex: 1;
   padding: 30px;
@@ -69,342 +75,84 @@ body {
   gap: 14px;
 }
 
-/* MESSAGE */
-
+/* MESSAGES */
 .message {
   max-width: 70%;
   padding: 14px 18px;
   border-radius: 18px;
   font-size: 14px;
-  line-height: 1.5;
-  animation: fadeIn 0.2s ease-in-out;
+  line-height: 1.6;
+  animation: fadeIn 0.25s ease;
 }
 
-/* USER MESSAGE */
-
+/* USER */
 .message.user {
   align-self: flex-end;
-  background: #6366f1;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
   color: white;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
   border-bottom-right-radius: 6px;
 }
 
-/* AI MESSAGE */
-
+/* AI */
 .message.ai {
   align-self: flex-start;
-  background: #f1f5f9;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  color: #222;
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
   border-bottom-left-radius: 6px;
 }
 
-/* INPUT AREA */
-
+/* INPUT BAR (GLASS) */
 .input-bar {
-   padding: 20px 16px
-  border-top: 1px solid #e5e7eb;
+  padding: 20px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
   display: flex;
   gap: 12px;
-  background:transparent;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(20px);
 }
 
-.input-wrapper{
-  display: flex;
-  align-items: center;
-
+.input-wrapper {
   position: relative;
   flex: 1;
 }
-.input-wrapper input{
+
+.input-wrapper input {
   width: 100%;
   padding: 14px 45px 14px 18px;
 }
 
-
+/* INPUT */
 .input-bar input {
-  flex: 1;
   padding: 14px 20px;
   border-radius: 30px;
-  border: 1px solid #e0e3e8;
-  background: #f4f6fb;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
   font-size: 14px;
   outline: none;
+  color: white;
   transition: 0.2s;
 }
-.input-bar input::placeholder{
-  color:#9aa0a6;
+
+.input-bar input::placeholder {
+  color: #94a3b8;
 }
 
 .input-bar input:focus {
-  background: #ffffff;
   border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-.disclaimer {
-  font-size: 12px;
-  color:#b0b3b8;
-  text-align: center;
-  padding: 8px;
-  opacity: 0.7;
-  
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
 }
 
-/* WELCOME CENTER */
-.welcome-center {
-  text-align: center;
-  margin-top: 40px;
-  padding: 15px;
-  color: #475569;
-}
-
-.welcome-center h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1e293b;
-}
-
-/* SUGGESTIONS */
-.suggestions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.suggestions button {
-  padding: 8px 12px;
-  border-radius: 25px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s ease;
-}
-
-.suggestions button:hover {
-  background: #f1f5f9;
-  transform: translateY(-2px);
-}
-
-.message.ai,
-.message.user{
-  animation: fadeIn 0.25s ease;
-}
-@keyframes fadeIn {
-  from{
-    opacity: 0;
-    transition: translateY(6px);
-  }
-  to{
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-}
-
+/* MIC BUTTON */
 .mic-btn {
- position:absolute;
- right: 20px;
- top: 30%;
- display: flex;
- align-items: center;
- justify-content: center;
- transform: translateY(-50);
- background: transparent;
- border: none;
- cursor: pointer;
-}
-
-.mic-btn:hover {
-  background: #e6e9f2;
-}
-
-
-
-/* SEND BUTTON */
-
-.send-btn {
-  * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
-}
-
-body {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  background: radial-gradient(
-      circle at 20% 10%,
-      rgba(37, 99, 235, 0.15) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(59, 130, 246, 0.12) 0%,
-      transparent 40%
-    ),
-    #f8fafc;
-}
-
-#root {
-  min-height: 100vh;
-}
-
-/* APP CONTAINER */
-.app {
-  width: 100%;
-  margin: 0 auto;
-  padding: 15px;
-  height: 95vh;
-  display: flex;
-  flex-direction: column;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: hidden;
-}
-
-
-/* HEADER */
-
-.header {
-  padding: 20px 30px;
-  border-bottom: 1px solid #eee;
-}
-
-.header h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.header p {
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 4px;
-}
-
-/* CHAT AREA */
-
-.chat-box {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* MESSAGE */
-
-.message {
-  max-width: 70%;
-  padding: 14px 18px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.5;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-/* USER MESSAGE */
-
-.message.user {
-  align-self: flex-end;
-  background: #6366f1;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  border-bottom-right-radius: 6px;
-}
-
-/* AI MESSAGE */
-
-.message.ai {
-  align-self: flex-start;
-  background: #f1f5f9;
-  padding: 10px 15px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  color: #222;
-  border-bottom-left-radius: 6px;
-}
-
-/* INPUT AREA */
-
-.input-bar {
-   padding: 20px 16px
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  gap: 12px;
-  background:transparent;
-}
-
-.input-wrapper{
-  display: flex;
-  align-items: center;
-
-  position: relative;
-  flex: 1;
-}
-.input-wrapper input{
-  width: 100%;
-  padding: 14px 45px 14px 18px;
-}
-
-
-.input-bar input {
-  flex: 1;
-  padding: 14px 20px;
-  border-radius: 30px;
-  border: 1px solid #e0e3e8;
-  background: #f4f6fb;
-  font-size: 14px;
-  outline: none;
-  transition: 0.2s;
-}
-.input-bar input::placeholder{
-  color:#9aa0a6;
-}
-
-.input-bar input:focus {
-  background: #ffffff;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-.disclaimer {
-  font-size: 12px;
-  color:#b0b3b8;
-  text-align: center;
-  padding: 8px;
-  opacity: 0.7;
-  
-}
-
-/* WELCOME CENTER */
-.welcome-center {
-  text-align: center;
-  margin-top: 40px;
-  padding: 15px;
-  color: #475569;
-}
-
-.welcome-center h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1e293b;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 /* SUGGESTIONS */
@@ -418,173 +166,63 @@ body {
 .suggestions button {
   padding: 8px 12px;
   border-radius: 25px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
   cursor: pointer;
   font-size: 13px;
+  color: #e2e8f0;
   transition: 0.2s ease;
 }
 
 .suggestions button:hover {
-  background: #f1f5f9;
+  background: rgba(255,255,255,0.12);
   transform: translateY(-2px);
 }
 
-.message.ai,
-.message.user{
-  animation: fadeIn 0.25s ease;
-}
-@keyframes fadeIn {
-  from{
-    opacity: 0;
-    transition: translateY(6px);
-  }
-  to{
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
+/* WELCOME */
+.welcome-center {
+  text-align: center;
+  margin-top: 40px;
+  color: #cbd5e1;
 }
 
-
-
-/* SEND BUTTON */
-
-
-
-/* LOADER */
-
-.loader {
-  width: 30px;
-  height: 10px;
-  border-radius: 20px;
-  background: #ddd;
-  animation: pulse 1s infinite ease-in-out;
+.welcome-center h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #ffffff;
 }
 
-@keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* --- Style pour les réponses de l'IA (JARVIS) --- */
-
+/* MARKDOWN CONTENT */
 .markdown-content {
-  text-align: justify;      /* Aligne le texte à gauche et à droite */
-  line-height: 1.6;         /* Espace les lignes pour plus de clarté */
-  word-wrap: break-word;    /* Évite que les longs calculs dépassent */
-  hyphens: auto;            /* Coupe les mots proprement si besoin */
+  line-height: 1.6;
+  word-wrap: break-word;
 }
 
-/* Espacement entre les paragraphes */
 .markdown-content p {
   margin-bottom: 12px;
 }
 
-/* Style des listes (pour tes calculs comptables) */
 .markdown-content ul {
   margin: 10px 0;
-  padding-left: 25px;       /* Décale les puces vers la droite */
-  text-align: left;         /* Les listes restent alignées à gauche (plus lisible) */
+  padding-left: 25px;
 }
 
 .markdown-content li {
-  margin-bottom: 8px;       /* Espace entre chaque point de calcul */
+  margin-bottom: 8px;
 }
 
-/* Met les titres en gras bien visibles */
-.markdown-content strong {
-  font-weight: 700;
-  color: inherit;           /* Garde la couleur du texte actuelle */
-}
-  transition: 0.2s;
-}
-
-.send-btn:hover {
-  transform: scale(1.05);
-}
-
-/* LOADER */
-
-.loader {
-  width: 30px;
-  height: 10px;
-  border-radius: 20px;
-  background: #ddd;
-  animation: pulse 1s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* --- Style pour les réponses de l'IA (JARVIS) --- */
-
-.markdown-content {
-  text-align: justify;      /* Aligne le texte à gauche et à droite */
-  line-height: 1.6;         /* Espace les lignes pour plus de clarté */
-  word-wrap: break-word;    /* Évite que les longs calculs dépassent */
-  hyphens: auto;            /* Coupe les mots proprement si besoin */
-}
-
-/* Espacement entre les paragraphes */
-.markdown-content p {
-  margin-bottom: 12px;
-}
-
-/* Style des listes (pour tes calculs comptables) */
-.markdown-content ul {
-  margin: 10px 0;
-  padding-left: 25px;       /* Décale les puces vers la droite */
-  text-align: left;         /* Les listes restent alignées à gauche (plus lisible) */
-}
-
-.markdown-content li {
-  margin-bottom: 8px;       /* Espace entre chaque point de calcul */
-}
-
-/* Met les titres en gras bien visibles */
-.markdown-content strong {
-  font-weight: 700;
-  color: inherit;           /* Garde la couleur du texte actuelle */
-}
-
+/* TYPING BUBBLE */
 .typing-bubble {
   display: inline-flex;
   gap: 6px;
   padding: 10px 14px;
-  background: transparent;
-  border-radius: 20px;
-  width: fit-content;
 }
 
 .typing-bubble span {
   width: 8px;
   height: 8px;
-  background: #555;
+  background: #94a3b8;
   border-radius: 50%;
   animation: bounce 1.2s infinite ease-in-out;
 }
@@ -595,6 +233,33 @@ body {
 
 .typing-bubble span:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+/* LOADER */
+.loader {
+  width: 30px;
+  height: 10px;
+  border-radius: 20px;
+  background: #334155;
+  animation: pulse 1s infinite ease-in-out;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
 }
 
 @keyframes bounce {

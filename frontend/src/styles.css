@@ -146,8 +146,8 @@ body::before {
 
 .input-bar input {
   width: 100%;
-  padding: 16px 25px;
-  padding-right: 60px;
+  padding: 14px 20px;
+  padding-right: 15px;
   border-radius: 50px;
   border: 1px solid var(--glass-border);
   background: rgba(15, 23, 42, 0.6);

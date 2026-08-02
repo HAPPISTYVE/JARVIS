@@ -1,4 +1,3 @@
-
 import * as GaussianSplats3D from "gaussian-splat-renderer-for-lam"
 import bsData from "../asset/test_expression_1s.json"
 
@@ -7,11 +6,13 @@ export class GaussianAvatar {
   private _assetsPath = "";
   public curState = "Idle";
   private _renderer: GaussianSplats3D.GaussianSplatRenderer;
+
   constructor(container: HTMLDivElement, assetsPath: string) {
     this._avatarDivEle = container;
     this._assetsPath = assetsPath;
     this._init();
   }
+
   private _init() {
     if (!this._avatarDivEle || !this._assetsPath) {
       throw new Error("Lack of necessary initialization parameters");
@@ -33,36 +34,64 @@ export class GaussianAvatar {
         alpha: 0.2
       },
     );
-    this.startTime = performance.now() / 1000;
-    setTimeout(() => {
-      this.curState = "Listening"
-    }, 5000);
-    setTimeout(() => {
-      this.curState = "Thinking"
-    }, 6000);
-    setTimeout(() => {
-      this.curState = "Responding"
-    }, 10000);
 
+    this.startTime = performance.now() / 1000;
+
+    setTimeout(() => {
+      this.curState = "Listening";
+    }, 5000);
+
+    setTimeout(() => {
+      this.curState = "Thinking";
+    }, 6000);
+
+    setTimeout(() => {
+      this.curState = "Responding";
+    }, 10000);
   }
+
   expressitionData: any;
-  startTime = 0
+  private liveBlendshapes: any = null;
+  startTime = 0;
+
   public getChatState() {
     return this.curState;
   }
+
+  // Permet de recevoir les blendshapes du backend
+  public updateBlendshapes(data: any) {
+    this.liveBlendshapes = data;
+  }
+
+  // Permet aussi de changer l'état du chatbot
+  public setChatState(state: string) {
+    this.curState = state;
+  }
+
   public getArkitFaceFrame() {
-    const length = bsData["frames"].length
+
+    // Si des données temps réel arrivent, on les utilise
+    if (this.liveBlendshapes) {
+      return this.liveBlendshapes;
+    }
+
+    // Sinon on garde l'animation de démonstration
+    const length = bsData["frames"].length;
 
     const frameInfoInternal = 1.0 / 30.0;
     const currentTime = performance.now() / 1000;
-    const calcDelta = (currentTime - this.startTime)%(length * frameInfoInternal);
-    const frameIndex = Math.floor(calcDelta / frameInfoInternal)
-    this.expressitionData ={};
+    const calcDelta =
+      (currentTime - this.startTime) % (length * frameInfoInternal);
 
-    
+    const frameIndex = Math.floor(calcDelta / frameInfoInternal);
+
+    this.expressitionData = {};
+
     bsData["names"].forEach((name: string, index: number) => {
-      this.expressitionData[name] = bsData["frames"][frameIndex]["weights"][index]
-    })
+      this.expressitionData[name] =
+        bsData["frames"][frameIndex]["weights"][index];
+    });
+
     return this.expressitionData;
   }
 }

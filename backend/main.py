@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
@@ -37,19 +37,71 @@ app.add_middleware(
 
 sessions = {}
 
+# ---------------------------
+# WebSocket Avatar
+# ---------------------------
+
+connected_clients = []
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    connected_clients.append(websocket)
+
+    print("✅ Avatar connecté")
+
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            print("Message reçu :", data)
+
+            # Test de communication
+            await websocket.send_json({
+                "type": "state",
+                "state": "Listening"
+            })
+
+    except WebSocketDisconnect:
+        print("❌ Avatar déconnecté")
+
+        if websocket in connected_clients:
+            connected_clients.remove(websocket)
+
+
+async def send_avatar(data: dict):
+    disconnected = []
+
+    for client in connected_clients:
+        try:
+            await client.send_json(data)
+        except Exception:
+            disconnected.append(client)
+
+    for client in disconnected:
+        if client in connected_clients:
+            connected_clients.remove(client)
+
+
 # --- Modèle pour la requête chat ---
 class Message(BaseModel):
     session_id: str
     message: str
 
+
 # --- Health Check ---
 @app.get("/")
 def health():
-    return {"status": "online", "system": "JARVIS"}
+    return {
+        "status": "online",
+        "system": "JARVIS"
+    }
+
 
 # --- Chat endpoint ---
 @app.post("/chat")
 def chat(data: Message):
+
     if data.session_id not in sessions:
         sessions[data.session_id] = {
             "history": [],
@@ -68,7 +120,9 @@ def chat(data: Message):
             "bot": response
         })
 
-        return {"response": response}
+        return {
+            "response": response
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -87,9 +141,14 @@ def voice_input(file: UploadFile = File(...)):
         os.remove(file_location)
 
         if text is None:
-            return {"text": "", "error": "Impossible de reconnaître le texte"}
+            return {
+                "text": "",
+                "error": "Impossible de reconnaître le texte"
+            }
 
-        return {"text": text}
+        return {
+            "text": text
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -98,6 +157,7 @@ def voice_input(file: UploadFile = File(...)):
 # --- Finalize endpoint ---
 @app.post("/finalize/{session_id}")
 def finalize(session_id: str):
+
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session introuvable")
 
@@ -114,6 +174,7 @@ def finalize(session_id: str):
     ]
 
     ml_result = predict(features)
+
     diagnosis = ml_result if ml_result else headache_protocol(patient)
 
     result = {
@@ -122,6 +183,7 @@ def finalize(session_id: str):
     }
 
     pdf_path = f"rapport_{session_id}.pdf"
+
     generate_pdf(result, pdf_path)
 
     return result
@@ -130,4 +192,9 @@ def finalize(session_id: str):
 # --- Run server ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=port
+    )

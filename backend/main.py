@@ -47,7 +47,7 @@ class Message(BaseModel):
 def health():
     return {"status": "online", "system": "JARVIS"}
 
-# --- Chat endpoint (Connecté à l'Avatar & Groq) ---
+# --- Chat endpoint ---
 @app.post("/chat")
 def chat(data: Message):
     if data.session_id not in sessions:
@@ -59,10 +59,8 @@ def chat(data: Message):
     session = sessions[data.session_id]
 
     try:
-        # Mise à jour des données patient selon le message
         session["patient"] = update_patient(session["patient"], data.message)
 
-        # Réponse textuelle via Groq
         response = ask_groq(data.message, session["history"])
 
         session["history"].append({
@@ -70,19 +68,7 @@ def chat(data: Message):
             "bot": response
         })
 
-        # Données prêtes pour l'avatar (Audio + Lip-sync / Blendshapes ARKit)
-        # Tu pourras remplacer audio_url par la génération de ta voix masculine naturelle
-        audio_url = "/static/response.mp3"
-        blendshapes = {
-            "jawOpen": [0.0, 0.4, 0.1, 0.0],
-            "mouthSmile": [0.2, 0.2, 0.2]
-        }
-
-        return {
-            "response": response,
-            "audio_url": audio_url,
-            "blendshapes": blendshapes
-        }
+        return {"response": response}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

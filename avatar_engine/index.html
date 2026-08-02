@@ -3,22 +3,44 @@
 
 <head>
   <meta charset="utf-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>3D Gaussian Splat Demo</title>
+
+  <title>LAM WebRender - JARVIS Avatar</title>
+
   <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
     #LAM_WebRender {
       background-color: #ffffff;
+      width: 100%;
       height: 100vh;
-      margin: 0px;
+      margin: 0;
     }
   </style>
 </head>
 
 <body>
+
   <div id="LAM_WebRender"></div>
+
   <script type="module" src="/src/main.ts"></script>
+
+  <!-- Console debug mobile temporaire -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+  </script>
+
 </body>
 
 </html>
-

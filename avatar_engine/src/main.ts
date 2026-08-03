@@ -54,7 +54,7 @@ function speak(text: string): void {
 
   // Récupérer et forcer une voix française disponible dans le navigateur
   const voices = window.speechSynthesis.getVoices();
-  console.log("voices avaible ",window.speechSynthesis.getVoices();)
+console.log("voices avaible ",window.speechSynthesis.getVoices())
   const frVoice = voices.find((v) => v.lang.includes("fr-FR"));
   if (frVoice) {
     speech.voice = frVoice;

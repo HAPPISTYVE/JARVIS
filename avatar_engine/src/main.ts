@@ -22,7 +22,13 @@ gaussianAvatar.start();
 
 function speak(text: string) {
 
-  if (!text) return;
+  if (!text) {
+    console.log("Texte vide");
+    return;
+  }
+
+
+  console.log("🗣️ Texte à prononcer :", text);
 
 
   const speech = new SpeechSynthesisUtterance(text);
@@ -35,12 +41,11 @@ function speak(text: string) {
 
 
 
-  // Choisir une voix française disponible
   const voices = window.speechSynthesis.getVoices();
 
 
   const frenchVoice = voices.find((voice) =>
-    voice.lang.toLowerCase().includes("fr")
+    voice.lang.toLowerCase().startsWith("fr")
   );
 
 
@@ -74,6 +79,17 @@ function speak(text: string) {
 
 
 
+  speech.onerror = (error) => {
+
+    console.log(
+      "Erreur voix :",
+      error
+    );
+
+  };
+
+
+
   window.speechSynthesis.cancel();
 
   window.speechSynthesis.speak(
@@ -85,19 +101,21 @@ function speak(text: string) {
 
 
 // ===============================
-// Connexion WebSocket
+// WebSocket Backend
 // ===============================
 
 connectWebSocket((data) => {
 
 
   console.log(
-    "Message reçu :",
+    "📩 Message reçu :",
     data
   );
 
 
+
   switch (data.type) {
+
 
 
     case "blendshapes":
@@ -122,6 +140,10 @@ connectWebSocket((data) => {
 
     case "response":
 
+      console.log(
+        "✅ Réponse JARVIS reçue"
+      );
+
       speak(
         data.text
       );
@@ -133,9 +155,11 @@ connectWebSocket((data) => {
     default:
 
       console.log(
-        "Message inconnu :",
-        data
+        "⚠️ Type inconnu :",
+        data.type
       );
+
+      break;
 
   }
 

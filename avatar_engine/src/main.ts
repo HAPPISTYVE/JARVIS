@@ -52,9 +52,9 @@ function speak(text: string): void {
   const speech = new SpeechSynthesisUtterance(text);
   speech.lang = "fr-FR";
   console.log("\n Langue francaise")
-  speech.rate = 1;
+  // speech.rate = 1;
   console.log("\nRate a 1")
-  speech.pitch = 1;
+  // speech.pitch = 1;
   console.log("\nPitch a 1")
   speech.volume = 1;
   console.log("\nvolume a 1")

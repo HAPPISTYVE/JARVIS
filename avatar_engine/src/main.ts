@@ -49,7 +49,7 @@ function speak(text: string): void {
   // window.speechSynthesis.cancel();
   console.log("\n l'ancienne lecture a ete bloque donc le script continue")
 
-  const speech = new SpeechSynthesisUtterance(text);
+  const speech = new SpeechSynthesisUtterance(   "Bonjour, JARVIS est activé");
   speech.lang = "fr-FR";
   console.log("\n Langue francaise")
   // speech.rate = 1;

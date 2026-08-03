@@ -59,17 +59,80 @@ async def websocket_endpoint(websocket: WebSocket):
 
     print("✅ Avatar connecté")
 
+    # Session WebSocket dédiée
+    session = {
+        "history": [],
+        "patient": Patient()
+    }
+
     try:
+
         while True:
 
             data = await websocket.receive_json()
 
-            print("Message avatar reçu :", data)
+            print("📩 Message reçu :", data)
 
-            await websocket.send_json({
-                "type": "state",
-                "state": "Listening"
-            })
+
+            # ----------------------------
+            # Avatar connecté
+            # ----------------------------
+            if data.get("type") == "avatar":
+
+                await websocket.send_json({
+                    "type": "state",
+                    "state": "Listening"
+                })
+
+                continue
+
+
+            # ----------------------------
+            # Message vocal utilisateur
+            # ----------------------------
+            if data.get("type") == "user_message":
+
+                user_text = data.get("text", "")
+
+                print("🎤 Utilisateur :", user_text)
+
+
+                await websocket.send_json({
+                    "type": "state",
+                    "state": "Thinking"
+                })
+
+
+                # Analyse patient
+                session["patient"] = update_patient(
+                    session["patient"],
+                    user_text
+                )
+
+
+                # IA Groq
+                response = ask_groq(
+                    user_text,
+                    session["history"]
+                )
+
+
+                session["history"].append({
+                    "user": user_text,
+                    "bot": response
+                })
+
+
+                await websocket.send_json({
+                    "type": "response",
+                    "text": response
+                })
+
+
+                await websocket.send_json({
+                    "type": "state",
+                    "state": "Listening"
+                })
 
 
     except WebSocketDisconnect:
@@ -78,8 +141,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
         if websocket in connected_clients:
             connected_clients.remove(websocket)
-
-
 
 async def send_avatar(data: dict):
 

@@ -58,7 +58,7 @@ function speak(text: string): void {
   console.log("\nPitch a 1")
   speech.volume = 1;
   console.log("\nvolume a 1")
-
+window.speechSynthesis.cancel();
   // Récupérer et forcer une voix française disponible dans le navigateur
   // const voices = window.speechSynthesis.getVoices();
   

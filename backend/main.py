@@ -12,7 +12,7 @@ from protocol_engine import headache_protocol
 from ml_engine import predict
 from pdf_generator import generate_pdf
 from voice_service import speech_to_text
-from tts_service import generate_speech
+
 
 # ✅ Lifespan = exécuté dans chaque worker
 @asynccontextmanager

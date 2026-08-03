@@ -1,6 +1,7 @@
 import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket } from "./services/websocket";
 
+console.log("🔥 MAIN TS NOUVELLE VERSION");
 
 const div = document.getElementById("LAM_WebRender") as HTMLDivElement;
 

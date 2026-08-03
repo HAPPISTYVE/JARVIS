@@ -2,7 +2,7 @@ import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket } from "./services/websocket";
 
 
-console.log("🔥🔥🔥 MAIN TTS VERSION ACTIVE 🔥🔥🔥");
+console.log("🔥🔥🔥 MAIN TTS FINAL VERSION 🔥🔥🔥");
 
 
 
@@ -28,21 +28,53 @@ gaussianAvatar.start();
 
 
 
-// ===============================
-// TTS navigateur amélioré
-// ===============================
+// =====================================
+// Activation TTS navigateur
+// =====================================
 
-function speak(text: string) {
+let voices: SpeechSynthesisVoice[] = [];
+
+
+function loadVoices() {
+
+  voices = window.speechSynthesis.getVoices();
+
+  console.log(
+    "🎙️ Voix chargées :",
+    voices
+  );
+
+}
+
+
+loadVoices();
+
+
+window.speechSynthesis.onvoiceschanged = () => {
+
+  loadVoices();
+
+};
+
+
+
+
+
+// =====================================
+// Fonction parler
+// =====================================
+
+
+function speak(text:string){
 
 
   console.log(
-    "🚀 SPEAK APPELÉ AVEC :",
+    "🚀 SPEAK :",
     text
   );
 
 
-
-  if (!text) {
+  if(!text){
 
     console.log(
       "❌ Texte vide"
@@ -54,136 +86,85 @@ function speak(text: string) {
 
 
 
-  const startSpeak = () => {
-
-
-    const voices =
-      window.speechSynthesis.getVoices();
-
-
+  if(!window.speechSynthesis){
 
     console.log(
-      "🎙️ VOIX DISPONIBLES :",
-      voices
+      "❌ TTS non disponible"
+    );
+
+    return;
+
+  }
+
+
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
     );
 
 
 
-    const utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
+  utterance.lang = "fr-FR";
+
+  utterance.rate = 1;
+
+  utterance.pitch = 1;
+
+  utterance.volume = 1;
 
 
 
-    utterance.lang = "fr-FR";
+  // Cherche une voix française locale
 
-    utterance.rate = 1;
-
-    utterance.pitch = 0.9;
-
-    utterance.volume = 1;
-
-
-
-    const frenchVoice =
-      voices.find(
-        voice =>
-          voice.lang
-          .toLowerCase()
-          .includes("fr")
-      );
+  const frenchVoice =
+    voices.find(
+      voice =>
+        voice.lang
+        .toLowerCase()
+        .startsWith("fr")
+        &&
+        !voice.name.includes("Online")
+    );
 
 
 
-    if (frenchVoice) {
+  if(frenchVoice){
+
+    console.log(
+      "✅ Voix utilisée :",
+      frenchVoice.name
+    );
 
 
-      console.log(
-        "✅ VOIX CHOISIE :",
-        frenchVoice.name
-      );
+    utterance.voice =
+      frenchVoice;
 
+  }
 
-      utterance.voice =
-        frenchVoice;
+  else{
 
+    console.log(
+      "⚠️ Pas de voix française locale"
+    );
 
-    } else {
-
-
-      console.log(
-        "⚠️ Aucune voix française trouvée"
-      );
-
-
-    }
-
-
-
-
-    utterance.onstart = () => {
-
-
-      console.log(
-        "🔊 JARVIS PARLE"
-      );
-
-
-      gaussianAvatar.setChatState(
-        "Responding"
-      );
-
-
-    };
+  }
 
 
 
 
 
-
-    utterance.onend = () => {
-
-
-      console.log(
-        "🎧 JARVIS FINI"
-      );
+  utterance.onstart = () => {
 
 
-      gaussianAvatar.setChatState(
-        "Listening"
-      );
+    console.log(
+      "🔊 JARVIS PARLE"
+    );
 
 
-    };
-
-
-
-
-
-
-    utterance.onerror = (error) => {
-
-
-      console.error(
-        "❌ ERREUR TTS :",
-        error
-      );
-
-
-    };
-
-
-
-
-
-
-    window.speechSynthesis.cancel();
-
-
-
-    window.speechSynthesis.speak(
-      utterance
+    gaussianAvatar.setChatState(
+      "Speaking"
     );
 
 
@@ -193,33 +174,58 @@ function speak(text: string) {
 
 
 
-
-  // Attendre le chargement des voix
-
-  if (
-    window.speechSynthesis
-    .getVoices()
-    .length === 0
-  ) {
+  utterance.onend = () => {
 
 
     console.log(
-      "⏳ Chargement des voix..."
+      "🎧 JARVIS FINI"
     );
 
 
-    window.speechSynthesis.onvoiceschanged =
-      startSpeak;
+    gaussianAvatar.setChatState(
+      "Listening"
+    );
+
+
+  };
 
 
 
-  } else {
 
 
-    startSpeak();
+  utterance.onerror = (error)=>{
 
 
-  }
+    console.error(
+      "❌ ERREUR TTS",
+      error
+    );
+
+
+  };
+
+
+
+
+
+  // Nettoyage ancien audio
+
+  window.speechSynthesis.cancel();
+
+
+
+
+  // délai obligatoire certains navigateurs
+
+  setTimeout(()=>{
+
+
+    window.speechSynthesis.speak(
+      utterance
+    );
+
+
+  },300);
 
 
 
@@ -230,86 +236,119 @@ function speak(text: string) {
 
 
 
-// ===============================
-// WebSocket Avatar
-// ===============================
+// =====================================
+// Petit réveil TTS pour iPhone
+// =====================================
 
 
-connectWebSocket((data) => {
+document.addEventListener(
+"click",
+()=>{
 
 
-  console.log(
-    "📩 MESSAGE AVATAR :",
-    data
+  const test =
+    new SpeechSynthesisUtterance(
+      ""
+    );
+
+
+  window.speechSynthesis.speak(
+    test
   );
 
 
-
-  switch(data.type) {
-
-
-
-    case "blendshapes":
-
-
-      gaussianAvatar.updateBlendshapes(
-        data.data
-      );
-
-
-      break;
+},
+{
+ once:true
+}
+);
 
 
 
 
 
-    case "state":
 
 
-      gaussianAvatar.setChatState(
-        data.state
-      );
+// =====================================
+// WebSocket Avatar
+// =====================================
 
 
-      break;
+connectWebSocket(
+(data)=>{
 
 
-
-
-
-    case "response":
-
-
-      console.log(
-        "✅ TEXTE JARVIS RECU :",
-        data.text
-      );
-
-
-      speak(
-        data.text
-      );
-
-
-      break;
+console.log(
+"📩 MESSAGE AVATAR :",
+data
+);
 
 
 
+switch(data.type){
 
 
-    default:
+
+case "blendshapes":
 
 
-      console.log(
-        "⚠️ TYPE INCONNU :",
-        data
-      );
+gaussianAvatar.updateBlendshapes(
+data.data
+);
 
 
-      break;
+break;
 
 
-  }
+
+
+
+case "state":
+
+
+gaussianAvatar.setChatState(
+data.state
+);
+
+
+break;
+
+
+
+
+
+case "response":
+
+
+console.log(
+"✅ TEXTE JARVIS :",
+data.text
+);
+
+
+
+speak(
+data.text
+);
+
+
+break;
+
+
+
+
+
+default:
+
+
+console.log(
+"⚠️ TYPE INCONNU :",
+data
+);
+
+
+}
+
 
 
 });

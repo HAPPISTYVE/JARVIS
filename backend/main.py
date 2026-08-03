@@ -166,14 +166,7 @@ async def chat(data: Message):
             session["history"]
         )
 
-        # Génération voix JARVIS
-        audio_path = generate_speech(response)
-
-        if audio_path:
-            await send_avatar({
-                "type": "audio",
-                "path": audio_path
-        })
+       
         
 
         # Avatar parle

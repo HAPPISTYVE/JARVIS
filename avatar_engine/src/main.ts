@@ -5,6 +5,7 @@ import { connectWebSocket } from "./services/websocket";
 console.log("🔥🔥🔥 MAIN TTS VERSION ACTIVE 🔥🔥🔥");
 
 
+
 const div = document.getElementById(
   "LAM_WebRender"
 ) as HTMLDivElement;
@@ -26,8 +27,9 @@ gaussianAvatar.start();
 
 
 
+
 // ===============================
-// TTS navigateur
+// TTS navigateur amélioré
 // ===============================
 
 function speak(text: string) {
@@ -39,6 +41,7 @@ function speak(text: string) {
   );
 
 
+
   if (!text) {
 
     console.log(
@@ -46,37 +49,141 @@ function speak(text: string) {
     );
 
     return;
+
   }
 
 
 
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
-    );
+  const startSpeak = () => {
 
 
+    const voices =
+      window.speechSynthesis.getVoices();
 
-  utterance.lang = "fr-FR";
-
-  utterance.rate = 1;
-
-  utterance.pitch = 0.9;
-
-  utterance.volume = 1;
-
-
-
-  utterance.onstart = () => {
 
 
     console.log(
-      "🔊 JARVIS PARLE"
+      "🎙️ VOIX DISPONIBLES :",
+      voices
     );
 
 
-    gaussianAvatar.setChatState(
-      "Responding"
+
+    const utterance =
+      new SpeechSynthesisUtterance(
+        text
+      );
+
+
+
+    utterance.lang = "fr-FR";
+
+    utterance.rate = 1;
+
+    utterance.pitch = 0.9;
+
+    utterance.volume = 1;
+
+
+
+    const frenchVoice =
+      voices.find(
+        voice =>
+          voice.lang
+          .toLowerCase()
+          .includes("fr")
+      );
+
+
+
+    if (frenchVoice) {
+
+
+      console.log(
+        "✅ VOIX CHOISIE :",
+        frenchVoice.name
+      );
+
+
+      utterance.voice =
+        frenchVoice;
+
+
+    } else {
+
+
+      console.log(
+        "⚠️ Aucune voix française trouvée"
+      );
+
+
+    }
+
+
+
+
+    utterance.onstart = () => {
+
+
+      console.log(
+        "🔊 JARVIS PARLE"
+      );
+
+
+      gaussianAvatar.setChatState(
+        "Responding"
+      );
+
+
+    };
+
+
+
+
+
+
+    utterance.onend = () => {
+
+
+      console.log(
+        "🎧 JARVIS FINI"
+      );
+
+
+      gaussianAvatar.setChatState(
+        "Listening"
+      );
+
+
+    };
+
+
+
+
+
+
+    utterance.onerror = (error) => {
+
+
+      console.error(
+        "❌ ERREUR TTS :",
+        error
+      );
+
+
+    };
+
+
+
+
+
+
+    window.speechSynthesis.cancel();
+
+
+
+    window.speechSynthesis.speak(
+      utterance
     );
 
 
@@ -85,49 +192,35 @@ function speak(text: string) {
 
 
 
-  utterance.onend = () => {
+
+
+  // Attendre le chargement des voix
+
+  if (
+    window.speechSynthesis
+    .getVoices()
+    .length === 0
+  ) {
 
 
     console.log(
-      "🎧 JARVIS FINI"
+      "⏳ Chargement des voix..."
     );
 
 
-    gaussianAvatar.setChatState(
-      "Listening"
-    );
-
-
-  };
+    window.speechSynthesis.onvoiceschanged =
+      startSpeak;
 
 
 
-
-  utterance.onerror = (error) => {
-
-
-    console.error(
-      "❌ ERREUR TTS :",
-      error
-    );
+  } else {
 
 
-  };
+    startSpeak();
 
 
+  }
 
-
-  // Stop ancienne voix
-
-  window.speechSynthesis.cancel();
-
-
-
-  // Lance la voix
-
-  window.speechSynthesis.speak(
-    utterance
-  );
 
 
 }
@@ -138,7 +231,7 @@ function speak(text: string) {
 
 
 // ===============================
-// WebSocket
+// WebSocket Avatar
 // ===============================
 
 
@@ -209,7 +302,7 @@ connectWebSocket((data) => {
 
       console.log(
         "⚠️ TYPE INCONNU :",
-        data.type
+        data
       );
 
 

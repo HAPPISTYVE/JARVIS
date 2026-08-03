@@ -17,45 +17,31 @@ gaussianAvatar.start();
 
 
 // ===============================
-// Voix navigateur
+// TTS navigateur
 // ===============================
 
 function speak(text: string) {
 
   if (!text) {
-    console.log("Texte vide");
+    console.log("❌ Aucun texte reçu");
     return;
   }
 
 
-  console.log("🗣️ Texte à prononcer :", text);
+  console.log("🗣️ Texte à lire :", text);
 
 
-  const speech = new SpeechSynthesisUtterance(text);
+  const utterance = new SpeechSynthesisUtterance(text);
 
 
-  speech.lang = "fr-FR";
-  speech.rate = 1;
-  speech.pitch = 0.8;
-  speech.volume = 1;
-
-
-
-  const voices = window.speechSynthesis.getVoices();
-
-
-  const frenchVoice = voices.find((voice) =>
-    voice.lang.toLowerCase().startsWith("fr")
-  );
-
-
-  if (frenchVoice) {
-    speech.voice = frenchVoice;
-  }
+  utterance.lang = "fr-FR";
+  utterance.rate = 1;
+  utterance.pitch = 0.9;
+  utterance.volume = 1;
 
 
 
-  speech.onstart = () => {
+  utterance.onstart = () => {
 
     console.log("🔊 JARVIS parle");
 
@@ -67,7 +53,7 @@ function speak(text: string) {
 
 
 
-  speech.onend = () => {
+  utterance.onend = () => {
 
     console.log("🎧 JARVIS écoute");
 
@@ -79,7 +65,7 @@ function speak(text: string) {
 
 
 
-  speech.onerror = (error) => {
+  utterance.onerror = (error) => {
 
     console.log(
       "Erreur voix :",
@@ -90,10 +76,13 @@ function speak(text: string) {
 
 
 
+  // Arrête une ancienne voix
   window.speechSynthesis.cancel();
 
+
+  // Lance la voix
   window.speechSynthesis.speak(
-    speech
+    utterance
   );
 
 }
@@ -141,12 +130,14 @@ connectWebSocket((data) => {
     case "response":
 
       console.log(
-        "✅ Réponse JARVIS reçue"
+        "✅ Réponse texte reçue"
       );
+
 
       speak(
         data.text
       );
+
 
       break;
 
@@ -155,12 +146,11 @@ connectWebSocket((data) => {
     default:
 
       console.log(
-        "⚠️ Type inconnu :",
-        data.type
+        "⚠️ Message non géré :",
+        data
       );
 
-      break;
-
   }
+
 
 });

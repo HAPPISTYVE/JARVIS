@@ -216,9 +216,9 @@ async def chat(data: Message):
             detail=str(e)
 
         )
-        # ===========================
-# Voice endpoint
-# ===========================
+        
+
+
 
 @app.post("/voice")
 def voice_input(file: UploadFile = File(...)):

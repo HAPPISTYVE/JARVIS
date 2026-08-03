@@ -2,7 +2,7 @@ import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket } from "./services/websocket";
 
 
-console.log("🔥🔥🔥 MAIN TTS FINAL VERSION 🔥🔥🔥");
+console.log("🔥🔥🔥 MAIN TTS SYSTEM VERSION 🔥🔥🔥");
 
 
 
@@ -11,15 +11,17 @@ const div = document.getElementById(
 ) as HTMLDivElement;
 
 
+
 const assetPath =
   "./asset/arkit/p2-1.zip";
 
 
 
-const gaussianAvatar = new GaussianAvatar(
-  div,
-  assetPath
-);
+const gaussianAvatar =
+  new GaussianAvatar(
+    div,
+    assetPath
+  );
 
 
 
@@ -28,48 +30,17 @@ gaussianAvatar.start();
 
 
 
-// =====================================
-// Activation TTS navigateur
-// =====================================
-
-let voices: SpeechSynthesisVoice[] = [];
-
-
-function loadVoices() {
-
-  voices = window.speechSynthesis.getVoices();
-
-  console.log(
-    "🎙️ Voix chargées :",
-    voices
-  );
-
-}
-
-
-loadVoices();
-
-
-window.speechSynthesis.onvoiceschanged = () => {
-
-  loadVoices();
-
-};
-
-
-
-
 
 // =====================================
-// Fonction parler
+// TTS NAVIGATEUR
 // =====================================
 
 
-function speak(text:string){
+function speak(text: string) {
 
 
   console.log(
-    "🚀 SPEAK :",
+    "🚀 SPEAK APPELÉ :",
     text
   );
 
@@ -98,7 +69,6 @@ function speak(text:string){
 
 
 
-
   const utterance =
     new SpeechSynthesisUtterance(
       text
@@ -116,40 +86,11 @@ function speak(text:string){
 
 
 
-  // Cherche une voix française locale
+  // On laisse le navigateur choisir la voix
 
-  const frenchVoice =
-    voices.find(
-      voice =>
-        voice.lang
-        .toLowerCase()
-        .startsWith("fr")
-        &&
-        !voice.name.includes("Online")
-    );
-
-
-
-  if(frenchVoice){
-
-    console.log(
-      "✅ Voix utilisée :",
-      frenchVoice.name
-    );
-
-
-    utterance.voice =
-      frenchVoice;
-
-  }
-
-  else{
-
-    console.log(
-      "⚠️ Pas de voix française locale"
-    );
-
-  }
+  console.log(
+    "🎙️ Voix automatique navigateur"
+  );
 
 
 
@@ -193,11 +134,11 @@ function speak(text:string){
 
 
 
-  utterance.onerror = (error)=>{
+  utterance.onerror = (error) => {
 
 
     console.error(
-      "❌ ERREUR TTS",
+      "❌ ERREUR TTS :",
       error
     );
 
@@ -208,14 +149,18 @@ function speak(text:string){
 
 
 
-  // Nettoyage ancien audio
+  // Réveille le moteur vocal
+
+  window.speechSynthesis.resume();
+
+
+
+  // Nettoyage ancienne lecture
 
   window.speechSynthesis.cancel();
 
 
 
-
-  // délai obligatoire certains navigateurs
 
   setTimeout(()=>{
 
@@ -225,7 +170,7 @@ function speak(text:string){
     );
 
 
-  },300);
+  },500);
 
 
 
@@ -236,41 +181,9 @@ function speak(text:string){
 
 
 
-// =====================================
-// Petit réveil TTS pour iPhone
-// =====================================
-
-
-document.addEventListener(
-"click",
-()=>{
-
-
-  const test =
-    new SpeechSynthesisUtterance(
-      ""
-    );
-
-
-  window.speechSynthesis.speak(
-    test
-  );
-
-
-},
-{
- once:true
-}
-);
-
-
-
-
-
-
 
 // =====================================
-// WebSocket Avatar
+// WEBSOCKET AVATAR
 // =====================================
 
 
@@ -282,6 +195,7 @@ console.log(
 "📩 MESSAGE AVATAR :",
 data
 );
+
 
 
 
@@ -321,7 +235,7 @@ case "response":
 
 
 console.log(
-"✅ TEXTE JARVIS :",
+"✅ TEXTE JARVIS REÇU :",
 data.text
 );
 
@@ -342,9 +256,13 @@ default:
 
 
 console.log(
-"⚠️ TYPE INCONNU :",
+"⚠️ MESSAGE INCONNU :",
 data
 );
+
+
+break;
+
 
 
 }

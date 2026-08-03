@@ -1,6 +1,6 @@
 import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket } from "./services/websocket";
-
+alert("MAIN TS TTS VERSION CHARGEE");
 console.log("🔥🔥🔥 MAIN TTS VERSION 2 CHARGÉE 🔥🔥🔥");
 
 const div = document.getElementById("LAM_WebRender") as HTMLDivElement;

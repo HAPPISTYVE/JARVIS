@@ -42,11 +42,11 @@ function speak(text: string): void {
   console.log("Le texte existe donc le script continu")
 
   // Si l'utilisateur n'a pas encore cliqué, débloquer au moment où la voix doit parler
-  unlockAudio();
+  // unlockAudio();
 
   // Annuler les lectures en cours avant d'en lancer une nouvelle
    console.log("\nblock l'ancienne lecture")
-  window.speechSynthesis.cancel();
+  // window.speechSynthesis.cancel();
   console.log("\n l'ancienne lecture a ete bloque donc le script continue")
 
   const speech = new SpeechSynthesisUtterance(text);

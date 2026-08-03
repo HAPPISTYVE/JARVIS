@@ -1,135 +1,92 @@
-let recognition:any = null;
+let recognition: any = null;
+let isPaused = false;
+let shouldBeListening = false;
 
+export function startAutoListening(onText: (text: string) => void) {
+  const SpeechRecognition =
+    (window as any).SpeechRecognition ||
+    (window as any).webkitSpeechRecognition;
 
-export function startAutoListening(
-  onText:(text:string)=>void
-){
+  if (!SpeechRecognition) {
+    console.error("❌ Speech Recognition non supporté par ce navigateur");
+    return;
+  }
 
+  if (recognition) {
+    try { recognition.stop(); } catch (e) {}
+  }
 
-const SpeechRecognition =
-(window as any).SpeechRecognition ||
-(window as any).webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = "fr-FR";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  shouldBeListening = true;
+  isPaused = false;
 
+  recognition.onstart = () => {
+    console.log("🎤 JARVIS écoute...");
+  };
 
+  recognition.onresult = (event: any) => {
+    if (isPaused) return;
 
-if(!SpeechRecognition){
+    const result = event.results[event.results.length - 1];
+    const text = result[0].transcript.trim();
 
-console.error(
-"❌ Speech Recognition non supporté"
-);
+    if (text) {
+      console.log("📝 VOIX → TEXTE :", text);
+      onText(text);
+    }
+  };
 
-return;
+  recognition.onerror = (error: any) => {
+    if (error.error !== 'aborted') {
+      console.error("❌ Micro erreur :", error);
+    }
+  };
 
+  recognition.onend = () => {
+    if (shouldBeListening && !isPaused) {
+      console.log("🔄 Redémarrage écoute...");
+      setTimeout(() => {
+        if (shouldBeListening && !isPaused) {
+          try {
+            recognition.start();
+          } catch (e) {}
+        }
+      }, 300);
+    } else {
+      console.log("🛑 Micro mis en pause temporairement");
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (e) {
+    console.error("Erreur au démarrage du micro :", e);
+  }
 }
 
-
-
-recognition =
-new SpeechRecognition();
-
-
-
-recognition.lang =
-"fr-FR";
-
-
-recognition.continuous =
-true;
-
-
-recognition.interimResults =
-false;
-
-
-
-recognition.onstart = ()=>{
-
-console.log(
-"🎤 JARVIS écoute..."
-);
-
-};
-
-
-
-
-recognition.onresult =
-(event:any)=>{
-
-
-const result =
-event.results[
-event.results.length - 1
-];
-
-
-
-const text =
-result[0].transcript;
-
-
-
-console.log(
-"📝 VOIX → TEXTE :",
-text
-);
-
-
-
-onText(text);
-
-
-};
-
-
-
-
-
-recognition.onerror =
-(error:any)=>{
-
-console.error(
-"❌ Micro erreur :",
-error
-);
-
-
-};
-
-
-
-
-
-recognition.onend =
-()=>{
-
-
-console.log(
-"🔄 Redémarrage écoute..."
-);
-
-
-
-setTimeout(()=>{
-
-try{
-
-recognition.start();
-
+/**
+ * Mettre en pause le micro quand JARVIS parle
+ */
+export function stopAutoListening() {
+  isPaused = true;
+  if (recognition) {
+    try {
+      recognition.stop();
+    } catch (e) {}
+  }
 }
-catch(e){}
 
-
-},500);
-
-
-
-};
-
-
-
-
-recognition.start();
-
-
+/**
+ * Réactiver le micro quand JARVIS a fini de parler
+ */
+export function resumeAutoListening() {
+  isPaused = false;
+  if (recognition && shouldBeListening) {
+    try {
+      recognition.start();
+    } catch (e) {}
+  }
 }

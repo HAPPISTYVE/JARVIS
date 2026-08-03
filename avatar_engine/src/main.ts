@@ -30,151 +30,244 @@ gaussianAvatar.start();
 
 
 
-
 // =====================================
-// TTS NAVIGATEUR
+// ACTIVATION AUDIO (IPHONE)
 // =====================================
 
 
-function speak(text: string) {
+let audioReady = false;
 
 
-  console.log(
-    "🚀 SPEAK APPELÉ :",
-    text
+const activateButton =
+document.createElement("button");
+
+
+activateButton.innerText =
+"🎙️ Activer JARVIS";
+
+
+activateButton.style.position =
+"fixed";
+
+
+activateButton.style.top =
+"20px";
+
+
+activateButton.style.left =
+"20px";
+
+
+activateButton.style.zIndex =
+"99999";
+
+
+activateButton.style.padding =
+"15px";
+
+
+activateButton.style.fontSize =
+"18px";
+
+
+
+activateButton.onclick = () => {
+
+
+  const test =
+  new SpeechSynthesisUtterance(
+    "Bonjour, JARVIS est activé"
   );
 
 
-  if(!text){
-
-    console.log(
-      "❌ Texte vide"
-    );
-
-    return;
-
-  }
+  test.lang =
+  "fr-FR";
 
 
+  test.volume =
+  1;
 
-  if(!window.speechSynthesis){
-
-    console.log(
-      "❌ TTS non disponible"
-    );
-
-    return;
-
-  }
-
-
-
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
-    );
-
-
-
-  utterance.lang = "fr-FR";
-
-  utterance.rate = 1;
-
-  utterance.pitch = 1;
-
-  utterance.volume = 1;
-
-
-
-  // On laisse le navigateur choisir la voix
-
-  console.log(
-    "🎙️ Voix automatique navigateur"
-  );
-
-
-
-
-
-  utterance.onstart = () => {
-
-
-    console.log(
-      "🔊 JARVIS PARLE"
-    );
-
-
-    gaussianAvatar.setChatState(
-      "Speaking"
-    );
-
-
-  };
-
-
-
-
-
-  utterance.onend = () => {
-
-
-    console.log(
-      "🎧 JARVIS FINI"
-    );
-
-
-    gaussianAvatar.setChatState(
-      "Listening"
-    );
-
-
-  };
-
-
-
-
-
-  utterance.onerror = (error) => {
-
-
-    console.error(
-      "❌ ERREUR TTS :",
-      error
-    );
-
-
-  };
-
-
-
-
-
-  // Réveille le moteur vocal
-
-  window.speechSynthesis.resume();
-
-
-
-  // Nettoyage ancienne lecture
 
   window.speechSynthesis.cancel();
 
 
+  window.speechSynthesis.speak(
+    test
+  );
 
 
-  setTimeout(()=>{
+
+  audioReady = true;
 
 
-    window.speechSynthesis.speak(
-      utterance
-    );
+  activateButton.remove();
 
 
-  },500);
+  console.log(
+    "✅ AUDIO ACTIVÉ"
+  );
+
+
+};
+
+
+
+document.body.appendChild(
+activateButton
+);
+
+
+
+
+
+// =====================================
+// TTS
+// =====================================
+
+
+function speak(text:string){
+
+
+console.log(
+"🚀 SPEAK :",
+text
+);
+
+
+
+if(!text){
+
+return;
+
+}
+
+
+
+if(!window.speechSynthesis){
+
+console.log(
+"❌ TTS indisponible"
+);
+
+return;
+
+}
+
+
+
+
+if(!audioReady){
+
+console.log(
+"⚠️ Audio non activé"
+);
+
+return;
+
+}
+
+
+
+
+
+const utterance =
+new SpeechSynthesisUtterance(
+text
+);
+
+
+
+utterance.lang =
+"fr-FR";
+
+
+utterance.rate =
+1;
+
+
+utterance.pitch =
+1;
+
+
+utterance.volume =
+1;
+
+
+
+
+
+utterance.onstart = ()=>{
+
+
+console.log(
+"🔊 JARVIS PARLE"
+);
+
+
+gaussianAvatar.setChatState(
+"Speaking"
+);
+
+
+};
+
+
+
+
+
+utterance.onend = ()=>{
+
+
+console.log(
+"🎧 JARVIS FINI"
+);
+
+
+gaussianAvatar.setChatState(
+"Listening"
+);
+
+
+};
+
+
+
+
+
+utterance.onerror = (error)=>{
+
+
+console.error(
+"❌ ERREUR TTS :",
+error
+);
+
+
+};
+
+
+
+
+
+window.speechSynthesis.cancel();
+
+
+
+setTimeout(()=>{
+
+
+window.speechSynthesis.speak(
+utterance
+);
+
+
+
+},100);
 
 
 
 }
+
 
 
 
@@ -217,6 +310,7 @@ break;
 
 
 
+
 case "state":
 
 
@@ -226,6 +320,7 @@ data.state
 
 
 break;
+
 
 
 
@@ -246,7 +341,9 @@ data.text
 );
 
 
+
 break;
+
 
 
 

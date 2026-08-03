@@ -101,6 +101,7 @@ connectWebSocket((data: { type: string; data?: any; state?: any; text?: string }
       break;
 
     case "response":
+      console.log("Reponse recu",data)
       if (data.text) {
         speak(data.text);
       }

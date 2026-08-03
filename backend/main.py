@@ -166,15 +166,12 @@ async def chat(data: Message):
             session["history"]
         )
 
+        # Envoyer la réponse texte à l'avatar
+       await send_avatar({
+          "type": "response",
+          "text": response
+       })
        
-        
-
-        # Avatar parle
-        await send_avatar({
-            "type": "state",
-            "state": "Speaking"
-        })
-
 
         session["history"].append({
 

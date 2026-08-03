@@ -1,11 +1,18 @@
 import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket } from "./services/websocket";
-alert("MAIN TS TTS VERSION CHARGEE");
-console.log("🔥🔥🔥 MAIN TTS VERSION 2 CHARGÉE 🔥🔥🔥");
 
-const div = document.getElementById("LAM_WebRender") as HTMLDivElement;
 
-const assetPath = "./asset/arkit/p2-1.zip";
+console.log("🔥🔥🔥 MAIN TTS VERSION ACTIVE 🔥🔥🔥");
+
+
+const div = document.getElementById(
+  "LAM_WebRender"
+) as HTMLDivElement;
+
+
+const assetPath =
+  "./asset/arkit/p2-1.zip";
+
 
 
 const gaussianAvatar = new GaussianAvatar(
@@ -14,7 +21,9 @@ const gaussianAvatar = new GaussianAvatar(
 );
 
 
+
 gaussianAvatar.start();
+
 
 
 // ===============================
@@ -23,115 +32,164 @@ gaussianAvatar.start();
 
 function speak(text: string) {
 
+
+  console.log(
+    "🚀 SPEAK APPELÉ AVEC :",
+    text
+  );
+
+
   if (!text) {
-    console.log("❌ Aucun texte reçu");
+
+    console.log(
+      "❌ Texte vide"
+    );
+
     return;
   }
 
 
-  console.log("🗣️ Texte à lire :", text);
 
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
 
-  const utterance = new SpeechSynthesisUtterance(text);
 
 
   utterance.lang = "fr-FR";
+
   utterance.rate = 1;
+
   utterance.pitch = 0.9;
+
   utterance.volume = 1;
 
 
 
   utterance.onstart = () => {
 
-    console.log("🔊 JARVIS parle");
+
+    console.log(
+      "🔊 JARVIS PARLE"
+    );
+
 
     gaussianAvatar.setChatState(
       "Responding"
     );
 
+
   };
+
 
 
 
   utterance.onend = () => {
 
-    console.log("🎧 JARVIS écoute");
+
+    console.log(
+      "🎧 JARVIS FINI"
+    );
+
 
     gaussianAvatar.setChatState(
       "Listening"
     );
 
+
   };
+
 
 
 
   utterance.onerror = (error) => {
 
-    console.log(
-      "Erreur voix :",
+
+    console.error(
+      "❌ ERREUR TTS :",
       error
     );
+
 
   };
 
 
 
-  // Arrête une ancienne voix
+
+  // Stop ancienne voix
+
   window.speechSynthesis.cancel();
 
 
+
   // Lance la voix
+
   window.speechSynthesis.speak(
     utterance
   );
+
 
 }
 
 
 
+
+
+
 // ===============================
-// WebSocket Backend
+// WebSocket
 // ===============================
+
 
 connectWebSocket((data) => {
 
 
   console.log(
-    "📩 Message reçu :",
+    "📩 MESSAGE AVATAR :",
     data
   );
 
 
 
-  switch (data.type) {
+  switch(data.type) {
 
 
 
     case "blendshapes":
 
+
       gaussianAvatar.updateBlendshapes(
         data.data
       );
 
+
       break;
+
+
 
 
 
     case "state":
 
+
       gaussianAvatar.setChatState(
         data.state
       );
+
 
       break;
 
 
 
+
+
     case "response":
 
+
       console.log(
-        "✅ Réponse texte reçue"
+        "✅ TEXTE JARVIS RECU :",
+        data.text
       );
 
 
@@ -144,12 +202,19 @@ connectWebSocket((data) => {
 
 
 
+
+
     default:
 
+
       console.log(
-        "⚠️ Message non géré :",
-        data
+        "⚠️ TYPE INCONNU :",
+        data.type
       );
+
+
+      break;
+
 
   }
 

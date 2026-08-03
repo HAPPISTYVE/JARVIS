@@ -1,106 +1,35 @@
 import { GaussianAvatar } from "./gaussianAvatar";
-import { connectWebSocket } from "./services/websocket";
+import { connectWebSocket, sendMessage } from "./services/websocket";
+import { startAutoListening } from "./services/speech";
 
 
-console.log("🔥🔥🔥 MAIN JARVIS COMPLETE VERSION 🔥🔥🔥");
+console.log(
+"🔥 JARVIS AUTO VOICE VERSION"
+);
 
 
-// ===============================
-// AVATAR
-// ===============================
 
 const div =
 document.getElementById(
-  "LAM_WebRender"
+"LAM_WebRender"
 ) as HTMLDivElement;
+
 
 
 const assetPath =
 "./asset/arkit/p2-1.zip";
 
 
+
 const gaussianAvatar =
 new GaussianAvatar(
-  div,
-  assetPath
+div,
+assetPath
 );
+
 
 
 gaussianAvatar.start();
-
-
-
-
-// ===============================
-// AUDIO ACTIVATION
-// (obligatoire iPhone)
-// ===============================
-
-let audioUnlocked = false;
-
-
-
-function unlockAudio(){
-
-
-if(audioUnlocked)
-return;
-
-
-
-const test =
-new SpeechSynthesisUtterance(
-"JARVIS activé"
-);
-
-
-
-test.lang =
-"fr-FR";
-
-
-test.volume =
-1;
-
-
-test.rate =
-1;
-
-
-
-window.speechSynthesis.cancel();
-
-
-window.speechSynthesis.speak(
-test
-);
-
-
-
-audioUnlocked = true;
-
-
-
-console.log(
-"✅ AUDIO ACTIVÉ"
-);
-
-
-
-}
-
-
-
-
-document.addEventListener(
-"click",
-unlockAudio,
-{
-once:true
-}
-);
-
-
 
 
 
@@ -110,14 +39,12 @@ once:true
 // TTS
 // ===============================
 
-function speak(
-text:string
-){
 
+function speak(text:string){
 
 
 console.log(
-"🗣️ JARVIS doit lire :",
+"🔊 Lecture :",
 text
 );
 
@@ -125,22 +52,6 @@ text
 
 if(!text)
 return;
-
-
-
-if(!audioUnlocked){
-
-
-console.log(
-"⚠️ Audio non activé"
-);
-
-
-return;
-
-}
-
-
 
 
 
@@ -169,49 +80,13 @@ speech.volume =
 
 
 
-
-
-const voices =
-window.speechSynthesis.getVoices();
-
-
-
-const french =
-voices.find(
-v =>
-v.lang
-.toLowerCase()
-.includes("fr")
-);
-
-
-
-if(french){
-
-speech.voice =
-french;
-
-
-console.log(
-"🎙️ Voix :",
-french.name
-);
-
-}
-
-
-
-
-
-
 speech.onstart =
 ()=>{
 
 
 console.log(
-"🔊 JARVIS PARLE"
+"🗣️ JARVIS parle"
 );
-
 
 
 gaussianAvatar.setChatState(
@@ -219,9 +94,7 @@ gaussianAvatar.setChatState(
 );
 
 
-
 };
-
 
 
 
@@ -231,7 +104,7 @@ speech.onend =
 
 
 console.log(
-"🎧 JARVIS FINI"
+"🎧 Retour écoute"
 );
 
 
@@ -247,40 +120,11 @@ gaussianAvatar.setChatState(
 
 
 
-
-
-speech.onerror =
-(e)=>{
-
-
-console.error(
-"❌ ERREUR TTS",
-e
-);
-
-
-
-};
-
-
-
-
-
 window.speechSynthesis.cancel();
-
-
-
-setTimeout(
-()=>{
 
 
 window.speechSynthesis.speak(
 speech
-);
-
-
-},
-200
 );
 
 
@@ -291,10 +135,8 @@ speech
 
 
 
-
-
 // ===============================
-// WEBSOCKET BACKEND RENDER
+// WEBSOCKET
 // ===============================
 
 
@@ -303,7 +145,7 @@ connectWebSocket(
 
 
 console.log(
-"📩 MESSAGE RECU BACKEND :",
+"📩",
 data
 );
 
@@ -313,8 +155,6 @@ data
 switch(data.type){
 
 
-
-// Animation bouche
 
 case "blendshapes":
 
@@ -329,9 +169,6 @@ break;
 
 
 
-
-// Etat avatar
-
 case "state":
 
 
@@ -345,42 +182,12 @@ break;
 
 
 
-
-
-// Réponse IA
-
 case "response":
-
-
-console.log(
-"✅ REPONSE JARVIS :",
-data.text
-);
-
 
 
 speak(
 data.text
 );
-
-
-
-break;
-
-
-
-
-
-
-
-default:
-
-
-console.log(
-"⚠️ TYPE INCONNU :",
-data
-);
-
 
 
 break;
@@ -391,3 +198,39 @@ break;
 
 
 });
+
+
+
+
+
+
+
+// ===============================
+// MICRO AUTOMATIQUE
+// ===============================
+
+
+startAutoListening(
+(text)=>{
+
+
+console.log(
+"🚀 Envoi automatique :",
+text
+);
+
+
+
+sendMessage({
+
+type:
+"user_message",
+
+text:
+text
+
+});
+
+
+}
+);

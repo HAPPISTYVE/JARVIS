@@ -53,37 +53,37 @@ function speak(text: string): void {
   speech.volume = 1;
 
   // Récupérer et forcer une voix française disponible dans le navigateur
-  const voices = window.speechSynthesis.getVoices();
+  // const voices = window.speechSynthesis.getVoices();
   
-  window.speechSynthesis.speak(
-    speech
-  );
+  // window.speechSynthesis.speak(
+  //   speech
+  // );
 
 
-  speech.onstart = () => {
-    console.log("🗣️ JARVIS parle");
-    gaussianAvatar.setChatState("Speaking");
-  };
+  // speech.onstart = () => {
+  //   console.log("🗣️ JARVIS parle");
+  //   gaussianAvatar.setChatState("Speaking");
+  // };
 
-  speech.onend = () => {
-    console.log("🎧 Retour écoute");
-    gaussianAvatar.setChatState("Listening");
-  };
+  // speech.onend = () => {
+  //   console.log("🎧 Retour écoute");
+  //   gaussianAvatar.setChatState("Listening");
+  // };
 
-  speech.onerror = (event) => {
-    console.error("❌ Erreur de synthèse vocale :", event);
-    gaussianAvatar.setChatState("Listening");
-  };
-
+  // speech.onerror = (event) => {
+  //   console.error("❌ Erreur de synthèse vocale :", event);
+  //   gaussianAvatar.setChatState("Listening");
+  // };
+console.log("Lecture du texte ")
   window.speechSynthesis.speak(speech);
 }
 
 // Charger les voix en arrière-plan (nécessaire sur Chrome)
-if (typeof window !== "undefined" && "speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-  };
-}
+// if (typeof window !== "undefined" && "speechSynthesis" in window) {
+//   window.speechSynthesis.onvoiceschanged = () => {
+//     window.speechSynthesis.getVoices();
+//   };
+// }
 
 // ===============================
 // WEBSOCKET

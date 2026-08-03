@@ -169,6 +169,12 @@ async def chat(data: Message):
         # Génération voix JARVIS
         audio_path = generate_speech(response)
 
+        if audio_path:
+            await send_avatar({
+                "type": "audio",
+                "path": audio_path
+        })
+        
 
         # Avatar parle
         await send_avatar({
@@ -184,7 +190,7 @@ async def chat(data: Message):
 
         })
 
-
+        
         # Avatar attend
         await send_avatar({
 

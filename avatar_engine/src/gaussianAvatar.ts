@@ -77,7 +77,7 @@ export class GaussianAvatar {
         headYaw: Math.cos(this.breathing * 0.5) * 0.01
     };
 }
-    }
+    
 
     // 2) Etats du chatbot
     if (this.curState === "Listening") {

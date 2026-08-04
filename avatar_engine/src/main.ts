@@ -39,33 +39,31 @@ function speak(text: string): void {
   console.log("🔊 Lecture :", text);
 
   if (!text) return;
-  console.log("Le texte existe donc le script continu")
+  console.log("Le texte existe donc le script continu");
 
-  // Si l'utilisateur n'a pas encore cliqué, débloquer au moment où la voix doit parler
-  // unlockAudio();
+  //  Si l'utilisateur n'a pas encore cliqué, débloquer au moment où la voix doit parler
+  unlockAudio();
 
-  // Annuler les lectures en cours avant d'en lancer une nouvelle
-   console.log("\nblock l'ancienne lecture")
+  //Annuler les lectures en cours avant d'en lancer une nouvelle
+  console.log("\nblock l'ancienne lecture");
   // window.speechSynthesis.cancel();
-  console.log("\n l'ancienne lecture a ete bloque donc le script continue")
+  console.log("\n l'ancienne lecture a ete bloque donc le script continue");
 
-  const speech = new SpeechSynthesisUtterance(   "Bonjour, JARVIS est activé");
+  const speech = new SpeechSynthesisUtterance(text);
   speech.lang = "fr-FR";
-  console.log("\n Langue francaise")
+  console.log("\n Langue francaise");
   // speech.rate = 1;
-  console.log("\nRate a 1")
+  console.log("\nRate a 1");
   // speech.pitch = 1;
-  console.log("\nPitch a 1")
+  console.log("\nPitch a 1");
   speech.volume = 1;
-  console.log("\nvolume a 1")
-window.speechSynthesis.cancel();
+  console.log("\nvolume a 1");
+  window.speechSynthesis.cancel();
   // Récupérer et forcer une voix française disponible dans le navigateur
-  // const voices = window.speechSynthesis.getVoices();
-  
-  // window.speechSynthesis.speak(
-  //   speech
-  // );
+  const voices = window.speechSynthesis.getVoices();
+  console.log("Lecture du texte ");
 
+  window.speechSynthesis.speak(speech);
 
   // speech.onstart = () => {
   //   console.log("🗣️ JARVIS parle");
@@ -81,8 +79,25 @@ window.speechSynthesis.cancel();
   //   console.error("❌ Erreur de synthèse vocale :", event);
   //   gaussianAvatar.setChatState("Listening");
   // };
-console.log("Lecture du texte ")
-  window.speechSynthesis.speak(speech);
+  // console.log("Lecture du texte ");
+  // window.speechSynthesis.speak(speech);
+
+  //  const test =
+  // new SpeechSynthesisUtterance(
+  //   "Bonjour, JARVIS est activé"
+  // );
+
+  // test.lang =
+  // "fr-FR";
+
+  // test.volume =
+  // 1;
+
+  // window.speechSynthesis.cancel();
+
+  // window.speechSynthesis.speak(
+  //   test
+  // );
 }
 
 // Charger les voix en arrière-plan (nécessaire sur Chrome)
@@ -96,26 +111,28 @@ console.log("Lecture du texte ")
 // WEBSOCKET
 // ===============================
 
-connectWebSocket((data: { type: string; data?: any; state?: any; text?: string }) => {
-  console.log("📩", data);
+connectWebSocket(
+  (data: { type: string; data?: any; state?: any; text?: string }) => {
+    console.log("📩", data);
 
-  switch (data.type) {
-    case "blendshapes":
-      gaussianAvatar.updateBlendshapes(data.data);
-      break;
+    switch (data.type) {
+      case "blendshapes":
+        gaussianAvatar.updateBlendshapes(data.data);
+        break;
 
-    case "state":
-      gaussianAvatar.setChatState(data.state);
-      break;
+      case "state":
+        gaussianAvatar.setChatState(data.state);
+        break;
 
-    case "response":
-      console.log("Reponse recu",data)
-      if (data.text) {
-        speak(data.text);
-      }
-      break;
-  }
-});
+      case "response":
+        console.log("Reponse recu", data);
+        if (data.text) {
+          speak(data.text);
+        }
+        break;
+    }
+  },
+);
 
 // ===============================
 // MICRO AUTOMATIQUE

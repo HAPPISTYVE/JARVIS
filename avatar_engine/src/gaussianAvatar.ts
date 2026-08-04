@@ -72,7 +72,7 @@ export class GaussianAvatar {
     // Visage neutre avec bouche légèrement ouverte
     this.expressitionData = {
         jawOpen: 0.05,
-        mouthClose: 0.60,
+        mouthClose: 0.50,
         headPitch: Math.sin(this.breathing) * 0.015,
         headYaw: Math.cos(this.breathing * 0.5) * 0.01
     };

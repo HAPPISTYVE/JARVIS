@@ -85,17 +85,7 @@ private speakingTimer = 0;
     }
 
     if (this.curState === "Speaking") {
-
-        this.expressitionData.jawOpen =
-            0.25 + Math.abs(Math.sin(this.speakingTimer)) * 0.45;
-
-    }
-
-    return this.expressitionData;
-}
-
-    // Sinon on garde l'animation de démonstration
-    const length = bsData["frames"].length;
+Const length = bsData["frames"].length;
 
     const frameInfoInternal = 1.0 / 30.0;
     const currentTime = performance.now() / 1000;
@@ -111,6 +101,18 @@ private speakingTimer = 0;
         bsData["frames"][frameIndex]["weights"][index];
     });
 
+    }
+
     return this.expressitionData;
+}
+
+    // Sinon on garde l'animation de démonstration
+    return {
+        jawOpen: 0,
+        headPitch: Math.sin(this.breathing) * 0.015,
+        headYaw: Math.cos(this.breathing * 0.5) * 0.01
+    };
+
+   
   }
 }

@@ -69,13 +69,14 @@ export class GaussianAvatar {
         };
     } 
     else {
-        // Visage neutre par défaut avec micro-respiration
-        this.expressitionData = {
-            jawOpen: 0,
-            mouthClose: 1,
-            headPitch: Math.sin(this.breathing) * 0.015,
-            headYaw: Math.cos(this.breathing * 0.5) * 0.01
-        };
+    // Visage neutre avec bouche légèrement ouverte
+    this.expressitionData = {
+        jawOpen: 0.05,
+        mouthClose: 0.85,
+        headPitch: Math.sin(this.breathing) * 0.015,
+        headYaw: Math.cos(this.breathing * 0.5) * 0.01
+    };
+}
     }
 
     // 2) Etats du chatbot

@@ -37,17 +37,7 @@ export class GaussianAvatar {
 
     this.startTime = performance.now() / 1000;
 
-    setTimeout(() => {
-      this.curState = "Listening";
-    }, 5000);
-
-    setTimeout(() => {
-      this.curState = "Thinking";
-    }, 6000);
-
-    setTimeout(() => {
-      this.curState = "Responding";
-    }, 10000);
+    
   }
 
   expressitionData: any;

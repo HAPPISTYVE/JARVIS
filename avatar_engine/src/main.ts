@@ -36,7 +36,7 @@ window.addEventListener("touchstart", unlockAudio, { once: true });
 // ===============================
 
 function speak(text: string): void {
-  console.log("🔊 Lecture :", text);
+  // console.log("🔊 Lecture :", text);
 
   if (!text) return;
   console.log("Le texte existe donc le script continu");

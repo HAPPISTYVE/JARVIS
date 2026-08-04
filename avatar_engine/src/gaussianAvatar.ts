@@ -61,15 +61,32 @@ private speakingTimer = 0;
   }
 
   public getArkitFaceFrame() {
+
     this.breathing += 0.05;
     this.speakingTimer += 0.4;
 
-    // Si des données temps réel arrivent, on les utilise
+
+    // 1) Si le backend envoie de vrais blendshapes
     if (this.liveBlendshapes) {
 
-    this.expressitionData = {
-        ...this.liveBlendshapes
-    };
+        this.expressitionData = {
+            ...this.liveBlendshapes
+        };
+
+    } 
+    else {
+
+        // visage neutre par défaut
+        this.expressitionData = {
+            jawOpen: 0,
+            mouthClose: 1
+        };
+
+    }
+
+
+
+    // 2) Etats du chatbot
 
     if (this.curState === "Listening") {
 
@@ -78,34 +95,48 @@ private speakingTimer = 0;
 
     }
 
+
     if (this.curState === "Thinking") {
 
         this.expressitionData.browInnerUp = 0.25;
 
     }
 
-    if (this.curState === "Speaking") {
-const length = bsData["frames"].length;
 
-    const frameInfoInternal = 1.0 / 30.0;
-    const currentTime = performance.now() / 1000;
-    const calcDelta =
-      (currentTime - this.startTime) % (length * frameInfoInternal);
 
-    const frameIndex = Math.floor(calcDelta / frameInfoInternal);
+    // 3) Animation bouche uniquement pendant Speaking
+    if (this.curState === "Speaking" && !this.liveBlendshapes) {
 
-    this.expressitionData = {};
 
-    bsData["names"].forEach((name: string, index: number) => {
-      this.expressitionData[name] =
-        bsData["frames"][frameIndex]["weights"][index];
-    });
+        const length = bsData["frames"].length;
+
+        const frameInfoInternal = 1 / 30;
+
+        const currentTime = performance.now() / 1000;
+
+        const calcDelta =
+            (currentTime - this.startTime) %
+            (length * frameInfoInternal);
+
+
+        const frameIndex =
+            Math.floor(calcDelta / frameInfoInternal);
+
+
+
+        bsData["names"].forEach((name:string,index:number)=>{
+
+            this.expressitionData[name] =
+            bsData["frames"][frameIndex]["weights"][index];
+
+        });
 
     }
 
+
+
     return this.expressitionData;
 }
-
     // Sinon on garde l'animation de démonstration
     return {
         jawOpen: 0,

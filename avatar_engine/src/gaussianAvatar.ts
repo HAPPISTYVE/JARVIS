@@ -85,7 +85,7 @@ private speakingTimer = 0;
     }
 
     if (this.curState === "Speaking") {
-Const length = bsData["frames"].length;
+const length = bsData["frames"].length;
 
     const frameInfoInternal = 1.0 / 30.0;
     const currentTime = performance.now() / 1000;

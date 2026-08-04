@@ -30,8 +30,8 @@ export class GaussianAvatar {
       {
         getChatState: this.getChatState.bind(this),
         getExpressionData: this.getArkitFaceFrame.bind(this),
-        backgroundColor: "0xff0000",
-        alpha: 0.2
+       backgroundColor: "0x05070d",
+        alpha: 1
       },
     );
 
@@ -53,6 +53,8 @@ export class GaussianAvatar {
   expressitionData: any;
   private liveBlendshapes: any = null;
   startTime = 0;
+  private breathing = 0;
+private speakingTimer = 0;
 
   public getChatState() {
     return this.curState;
@@ -69,11 +71,38 @@ export class GaussianAvatar {
   }
 
   public getArkitFaceFrame() {
+    this.breathing += 0.05;
+    this.speakingTimer += 0.4;
 
     // Si des données temps réel arrivent, on les utilise
     if (this.liveBlendshapes) {
-      return this.liveBlendshapes;
+
+    this.expressitionData = {
+        ...this.liveBlendshapes
+    };
+
+    if (this.curState === "Listening") {
+
+        this.expressitionData.headPitch =
+            Math.sin(this.breathing) * 0.02;
+
     }
+
+    if (this.curState === "Thinking") {
+
+        this.expressitionData.browInnerUp = 0.25;
+
+    }
+
+    if (this.curState === "Speaking") {
+
+        this.expressitionData.jawOpen =
+            0.25 + Math.abs(Math.sin(this.speakingTimer)) * 0.45;
+
+    }
+
+    return this.expressitionData;
+}
 
     // Sinon on garde l'animation de démonstration
     const length = bsData["frames"].length;

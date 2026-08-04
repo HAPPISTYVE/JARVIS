@@ -36,13 +36,15 @@ export class GaussianAvatar {
     );
 
     this.startTime = performance.now() / 1000;
+
+    
   }
 
   expressitionData: any;
   private liveBlendshapes: any = null;
   startTime = 0;
   private breathing = 0;
-  private speakingTimer = 0;
+private speakingTimer = 0;
 
   public getChatState() {
     return this.curState;
@@ -64,33 +66,51 @@ export class GaussianAvatar {
 
     // Si des données temps réel arrivent, on les utilise
     if (this.liveBlendshapes) {
-        this.expressitionData = {
-            ...this.liveBlendshapes
-        };
 
-        if (this.curState === "Listening") {
-            this.expressitionData.headPitch =
-                Math.sin(this.breathing) * 0.02;
-        }
+    this.expressitionData = {
+        ...this.liveBlendshapes
+    };
 
-        if (this.curState === "Thinking") {
-            this.expressitionData.browInnerUp = 0.25;
-        }
+    if (this.curState === "Listening") {
 
-        if (this.curState === "Speaking") {
-            this.expressitionData.jawOpen =
-                0.25 + Math.abs(Math.sin(this.speakingTimer)) * 0.45;
-        }
+        this.expressitionData.headPitch =
+            Math.sin(this.breathing) * 0.02;
 
-        return this.expressitionData;
     }
 
-    // Sinon (au démarrage sans backend), on garde un état calme mais vivant (micro-respiration)
-    // au lieu de jouer l'animation de démo bsData
-    return {
-        jawOpen: 0,
-        headPitch: Math.sin(this.breathing) * 0.015,
-        headYaw: Math.cos(this.breathing * 0.5) * 0.01
-    };
+    if (this.curState === "Thinking") {
+
+        this.expressitionData.browInnerUp = 0.25;
+
+    }
+
+    if (this.curState === "Speaking") {
+
+        this.expressitionData.jawOpen =
+            0.25 + Math.abs(Math.sin(this.speakingTimer)) * 0.45;
+
+    }
+
+    return this.expressitionData;
+}
+
+    // Sinon on garde l'animation de démonstration
+    const length = bsData["frames"].length;
+
+    const frameInfoInternal = 1.0 / 30.0;
+    const currentTime = performance.now() / 1000;
+    const calcDelta =
+      (currentTime - this.startTime) % (length * frameInfoInternal);
+
+    const frameIndex = Math.floor(calcDelta / frameInfoInternal);
+
+    this.expressitionData = {};
+
+    bsData["names"].forEach((name: string, index: number) => {
+      this.expressitionData[name] =
+        bsData["frames"][frameIndex]["weights"][index];
+    });
+
+    return this.expressitionData;
   }
 }

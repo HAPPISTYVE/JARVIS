@@ -13,16 +13,6 @@ gaussianAvatar.start();
 // Variable pour vérifier si l'audio a été débloqué par le navigateur
 let isAudioUnlocked = false;
 
-let voices: SpeechSynthesisVoice[] = [];
-
-function loadVoices() {
-  voices = window.speechSynthesis.getVoices();
-  console.log("Voix disponibles :", voices);
-}
-
-window.speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
-
 /**
  * Déverrouille l'API SpeechSynthesis suite à un geste utilisateur.
  * Obligatoire pour contourner la politique d'Autoplay des navigateurs.
@@ -68,24 +58,6 @@ function speak(text: string): void {
   console.log("\nPitch a 1");
   speech.volume = 1;
   console.log("\nvolume a 1");
-
-
-const maleVoice = voices.find((voice) =>
-  voice.lang.startsWith("fr") &&
-  (
-    voice.name.includes("Paul") ||
-    voice.name.includes("Thomas") ||
-    voice.name.toLowerCase().includes("male")
-  )
-);
-
-if (maleVoice) {
-  speech.voice = maleVoice;
-  console.log("✅ Voix masculine :", maleVoice.name);
-} else {
-  console.log("❌ Pas de voix masculine trouvée");
-}
-  
 
   speech.onstart = () => {
   console.log("🗣️ JARVIS parle");

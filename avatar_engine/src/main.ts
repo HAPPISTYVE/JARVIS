@@ -58,6 +58,22 @@ function speak(text: string): void {
   console.log("\nPitch a 1");
   speech.volume = 1;
   console.log("\nvolume a 1");
+
+  speech.onstart = () => {
+  console.log("🗣️ JARVIS parle");
+  gaussianAvatar.setChatState("Speaking");
+};
+
+speech.onend = () => {
+  console.log("🎧 Retour écoute");
+  gaussianAvatar.setChatState("Listening");
+};
+
+speech.onerror = (event) => {
+  console.error(event);
+  gaussianAvatar.setChatState("Listening");
+};
+  
   window.speechSynthesis.cancel();
   // Récupérer et forcer une voix française disponible dans le navigateur
   const voices = window.speechSynthesis.getVoices();
@@ -92,7 +108,7 @@ function speak(text: string): void {
 
   // test.volume =
   // 1;
-
+   
   // window.speechSynthesis.cancel();
 
   // window.speechSynthesis.speak(

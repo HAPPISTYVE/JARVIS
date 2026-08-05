@@ -2,7 +2,7 @@ import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket, sendMessage } from "./services/websocket";
 import { startAutoListening } from "./services/speech";
 
-console.log("🔥 JARVIS AUTO VOICE VERSION");
+console.log("🔥 JARVIS AUTO VOICE VERSION (Optimisé iOS / Safari / Chrome)");
 
 const div = document.getElementById("LAM_WebRender") as HTMLDivElement;
 const assetPath = "./asset/arkit/p2-1.zip";
@@ -10,118 +10,93 @@ const assetPath = "./asset/arkit/p2-1.zip";
 const gaussianAvatar = new GaussianAvatar(div, assetPath);
 gaussianAvatar.start();
 
-// Variable pour vérifier si l'audio a été débloqué par le navigateur
+// Variable pour suivre le déblocage audio iOS
 let isAudioUnlocked = false;
 
 /**
- * Déverrouille l'API SpeechSynthesis suite à un geste utilisateur.
- * Obligatoire pour contourner la politique d'Autoplay des navigateurs.
+ * Déverrouille l'API SpeechSynthesis sur iOS suite à une action utilisateur.
  */
 function unlockAudio(): void {
   if (isAudioUnlocked) return;
 
-  // Émettre une phrase vide pour activer le moteur vocal
-  const utterance = new SpeechSynthesisUtterance("");
-  window.speechSynthesis.speak(utterance);
-  isAudioUnlocked = true;
-  console.log("🔓 Audio débloqué par l'utilisateur !");
+  if ("speechSynthesis" in window) {
+    // Un espace " " (et non "") force iOS à réveiller la synthèse vocale
+    const utterance = new SpeechSynthesisUtterance(" ");
+    utterance.volume = 0.01; // Inaudible pour l'utilisateur
+    window.speechSynthesis.speak(utterance);
+
+    isAudioUnlocked = true;
+    console.log("🔓 Audio iOS débloqué !");
+  }
 }
 
-// Débloquer l'audio au premier clic sur la page
+// Débloquer au premier clic ou premier toucher sur iPhone
 window.addEventListener("click", unlockAudio, { once: true });
 window.addEventListener("touchstart", unlockAudio, { once: true });
+
+// Charger les voix en mémoire dès que possible (requis sur iOS/Chrome)
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+}
 
 // ===============================
 // TTS (Text-to-Speech)
 // ===============================
 
 function speak(text: string): void {
-  // console.log("🔊 Lecture :", text);
+  if (!text || !("speechSynthesis" in window)) return;
 
-  if (!text) return;
-  console.log("Le texte existe donc le script continu");
+  console.log("🔊 Préparation de la lecture :", text);
 
-  //  Si l'utilisateur n'a pas encore cliqué, débloquer au moment où la voix doit parler
+  // S'assurer que l'audio a bien été débloqué
   unlockAudio();
 
-  //Annuler les lectures en cours avant d'en lancer une nouvelle
-  console.log("\nblock l'ancienne lecture");
-  // window.speechSynthesis.cancel();
-  console.log("\n l'ancienne lecture a ete bloque donc le script continue");
+  // Si le moteur audio d'iOS s'est mis en pause, on le relance
+  if (window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
+  }
+
+  // Ne faire cancel() QUE si une lecture est réellement déjà en cours
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
 
   const speech = new SpeechSynthesisUtterance(text);
   speech.lang = "fr-FR";
-  console.log("\n Langue francaise");
-  // speech.rate = 1;
-  console.log("\nRate a 1");
-  // speech.pitch = 1;
-  console.log("\nPitch a 1");
-  speech.volume = 1;
-  console.log("\nvolume a 1");
+  speech.rate = 1.0;
+  speech.pitch = 1.0;
+  speech.volume = 1.0;
 
-  speech.onstart = () => {
-  console.log("🗣️ JARVIS parle");
-  gaussianAvatar.setChatState("Speaking");
-};
-
-speech.onend = () => {
-  console.log("🎧 Retour écoute");
-  gaussianAvatar.setChatState("Listening");
-};
-
-speech.onerror = (event) => {
-  console.error(event);
-  gaussianAvatar.setChatState("Listening");
-};
-  
-  window.speechSynthesis.cancel();
-  // Récupérer et forcer une voix française disponible dans le navigateur
+  // Récupérer et forcer la meilleure voix française disponible sur l'iPhone
   const voices = window.speechSynthesis.getVoices();
-  console.log("Lecture du texte ");
+  const frVoice = voices.find((v) => v.lang.startsWith("fr") || v.lang.includes("FR"));
+  if (frVoice) {
+    speech.voice = frVoice;
+  }
 
-  window.speechSynthesis.speak(speech);
+  // ⚠️ CRUCIAL : Les événements DOIVENT être rattachés AVANT d'appeler speak()
+  speech.onstart = () => {
+    console.log("🗣️ JARVIS parle");
+    gaussianAvatar.setChatState("Speaking");
+  };
 
-  // speech.onstart = () => {
-  //   console.log("🗣️ JARVIS parle");
-  //   gaussianAvatar.setChatState("Speaking");
-  // };
+  speech.onend = () => {
+    console.log("🎧 Retour écoute");
+    gaussianAvatar.setChatState("Listening");
+  };
 
-  // speech.onend = () => {
-  //   console.log("🎧 Retour écoute");
-  //   gaussianAvatar.setChatState("Listening");
-  // };
+  speech.onerror = (event) => {
+    console.error("❌ Erreur de synthèse vocale :", event);
+    gaussianAvatar.setChatState("Listening");
+  };
 
-  // speech.onerror = (event) => {
-  //   console.error("❌ Erreur de synthèse vocale :", event);
-  //   gaussianAvatar.setChatState("Listening");
-  // };
-  // console.log("Lecture du texte ");
-  // window.speechSynthesis.speak(speech);
-
-  //  const test =
-  // new SpeechSynthesisUtterance(
-  //   "Bonjour, JARVIS est activé"
-  // );
-
-  // test.lang =
-  // "fr-FR";
-
-  // test.volume =
-  // 1;
-   
-  // window.speechSynthesis.cancel();
-
-  // window.speechSynthesis.speak(
-  //   test
-  // );
+  // Petit délai de 50ms pour laisser le temps au moteur audio iOS d'être prêt
+  setTimeout(() => {
+    window.speechSynthesis.speak(speech);
+  }, 50);
 }
-
-// Charger les voix en arrière-plan (nécessaire sur Chrome)
-// if (typeof window !== "undefined" && "speechSynthesis" in window) {
-//   window.speechSynthesis.onvoiceschanged = () => {
-//     window.speechSynthesis.getVoices();
-//   };
-// }
 
 // ===============================
 // WEBSOCKET
@@ -129,7 +104,7 @@ speech.onerror = (event) => {
 
 connectWebSocket(
   (data: { type: string; data?: any; state?: any; text?: string }) => {
-    console.log("📩", data);
+    console.log("📩 Données reçues :", data);
 
     switch (data.type) {
       case "blendshapes":
@@ -141,13 +116,13 @@ connectWebSocket(
         break;
 
       case "response":
-        console.log("Reponse recu", data);
+        console.log("Réponse reçue :", data);
         if (data.text) {
           speak(data.text);
         }
         break;
     }
-  },
+  }
 );
 
 // ===============================
@@ -155,7 +130,7 @@ connectWebSocket(
 // ===============================
 
 startAutoListening((text: string) => {
-  // L'utilisateur vient de parler (donc interaction valide) -> Débloquer l'audio si ce n'est pas fait
+  // L'utilisateur a interagi vocalement -> Valider l'interaction audio
   unlockAudio();
 
   console.log("🚀 Envoi automatique :", text);

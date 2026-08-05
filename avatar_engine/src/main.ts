@@ -11,6 +11,7 @@ const gaussianAvatar = new GaussianAvatar(div, assetPath);
 gaussianAvatar.start();
 
 let selectedVoice: SpeechSynthesisVoice | null = null;
+let audioReady = false;
 let stopListening: (() => void) | null = null;
 let startListeningAgain: (() => void) | null = null;
 
@@ -40,35 +41,52 @@ if ('speechSynthesis' in window) {
 // ------------------------------
 // Débloquer audio iPhone
 // ------------------------------
-function unlockAudio() {
-  const u = new SpeechSynthesisUtterance(' ');
-  u.volume = 0;
-  window.speechSynthesis.speak(u);
-}
+const activateButton = document.createElement('button');
 
-// IMPORTANT : interaction utilisateur
-window.addEventListener(
-  'touchstart',
-  () => {
-    unlockAudio();
-  },
-  { once: true }
-);
+activateButton.innerText = '🎙️ Activer JARVIS';
 
-window.addEventListener(
-  'click',
-  () => {
-    unlockAudio();
-  },
-  { once: true }
-);
+activateButton.style.position = 'fixed';
+activateButton.style.top = '20px';
+activateButton.style.left = '20px';
+activateButton.style.zIndex = '99999';
+activateButton.style.padding = '15px';
+activateButton.style.fontSize = '18px';
+
+activateButton.onclick = () => {
+
+  const test = new SpeechSynthesisUtterance(
+    'Bonjour, JARVIS est activé'
+  );
+
+  test.lang = 'fr-FR';
+  test.volume = 1;
+
+  if (selectedVoice) {
+    test.voice = selectedVoice;
+  }
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(test);
+
+  audioReady = true;
+
+  activateButton.remove();
+
+  console.log('✅ Audio activé');
+
+};
+
+document.body.appendChild(activateButton);
 
 // ------------------------------
 // TTS
 // ------------------------------
 function speak(text: string) {
   if (!text) return;
-
+  if (!audioReady) {
+  console.log("⚠️ Audio non activé");
+  return;
+  }
   // Arrêter le micro avant de parler
   if (stopListening) {
     stopListening();

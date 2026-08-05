@@ -2,7 +2,7 @@ import { GaussianAvatar } from "./gaussianAvatar";
 import { connectWebSocket, sendMessage } from "./services/websocket";
 import { startAutoListening } from "./services/speech";
 
-console.log("🔥 JARVIS AUTO VOICE VERSION (Optimisé iOS / Safari / Chrome)");
+console.log("🔥 JARVIS AUTO VOICE VERSION (Strict iOS / Safari Fixes)");
 
 const div = document.getElementById("LAM_WebRender") as HTMLDivElement;
 const assetPath = "./asset/arkit/p2-1.zip";
@@ -10,36 +10,61 @@ const assetPath = "./asset/arkit/p2-1.zip";
 const gaussianAvatar = new GaussianAvatar(div, assetPath);
 gaussianAvatar.start();
 
-// Variable pour suivre le déblocage audio iOS
+// Variables globales
 let isAudioUnlocked = false;
+let currentUtterance: SpeechSynthesisUtterance | null = null; // Fix pour le Garbage Collection iOS
+let selectedVoice: SpeechSynthesisVoice | null = null;
 
 /**
- * Déverrouille l'API SpeechSynthesis sur iOS suite à une action utilisateur.
+ * Charge la voix FR en amont
+ */
+function loadVoices(): void {
+  if (!("speechSynthesis" in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  selectedVoice =
+    voices.find((v) => v.lang === "fr-FR" || v.lang.startsWith("fr")) || null;
+}
+
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+/**
+ * Déverrouille l'API Web Speech & Web Audio sur iOS
  */
 function unlockAudio(): void {
   if (isAudioUnlocked) return;
 
   if ("speechSynthesis" in window) {
-    // Un espace " " (et non "") force iOS à réveiller la synthèse vocale
-    const utterance = new SpeechSynthesisUtterance(" ");
-    utterance.volume = 0.01; // Inaudible pour l'utilisateur
-    window.speechSynthesis.speak(utterance);
+    // 1. Déblocage SpeechSynthesis
+    const dummyUtterance = new SpeechSynthesisUtterance(" ");
+    dummyUtterance.volume = 0.01;
+    window.speechSynthesis.speak(dummyUtterance);
+
+    // 2. Déblocage Web Audio (garde le canal audio d'iOS actif)
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContext) {
+        const audioCtx = new AudioContext();
+        const buffer = audioCtx.createBuffer(1, 1, 22050);
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
+      }
+    } catch (e) {
+      console.warn("Web Audio non disponible pour le déblocage", e);
+    }
 
     isAudioUnlocked = true;
-    console.log("🔓 Audio iOS débloqué !");
+    console.log("🔓 Audio iOS Safari totalement débloqué !");
   }
 }
 
-// Débloquer au premier clic ou premier toucher sur iPhone
+// Écouteurs globaux pour débloquer dès le 1er geste utilisateur
 window.addEventListener("click", unlockAudio, { once: true });
 window.addEventListener("touchstart", unlockAudio, { once: true });
-
-// Charger les voix en mémoire dès que possible (requis sur iOS/Chrome)
-if (typeof window !== "undefined" && "speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-  };
-}
 
 // ===============================
 // TTS (Text-to-Speech)
@@ -50,52 +75,52 @@ function speak(text: string): void {
 
   console.log("🔊 Préparation de la lecture :", text);
 
-  // S'assurer que l'audio a bien été débloqué
+  // Tenter de débloquer si ce n'est pas déjà fait
   unlockAudio();
 
-  // Si le moteur audio d'iOS s'est mis en pause, on le relance
+  // Relance le moteur s'il est en pause (bug classique Safari)
   if (window.speechSynthesis.paused) {
     window.speechSynthesis.resume();
   }
 
-  // Ne faire cancel() QUE si une lecture est réellement déjà en cours
-  if (window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel();
+  // Stopper la lecture précédente
+  window.speechSynthesis.cancel();
+
+  // Création de l'instance
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = "fr-FR";
+  currentUtterance.rate = 1.0;
+  currentUtterance.pitch = 1.0;
+  currentUtterance.volume = 1.0;
+
+  if (selectedVoice) {
+    currentUtterance.voice = selectedVoice;
   }
 
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = "fr-FR";
-  speech.rate = 1.0;
-  speech.pitch = 1.0;
-  speech.volume = 1.0;
-
-  // Récupérer et forcer la meilleure voix française disponible sur l'iPhone
-  const voices = window.speechSynthesis.getVoices();
-  const frVoice = voices.find((v) => v.lang.startsWith("fr") || v.lang.includes("FR"));
-  if (frVoice) {
-    speech.voice = frVoice;
-  }
-
-  // ⚠️ CRUCIAL : Les événements DOIVENT être rattachés AVANT d'appeler speak()
-  speech.onstart = () => {
+  // Événements
+  currentUtterance.onstart = () => {
     console.log("🗣️ JARVIS parle");
     gaussianAvatar.setChatState("Speaking");
   };
 
-  speech.onend = () => {
+  currentUtterance.onend = () => {
     console.log("🎧 Retour écoute");
     gaussianAvatar.setChatState("Listening");
+    currentUtterance = null; // Libération après lecture complète
   };
 
-  speech.onerror = (event) => {
+  currentUtterance.onerror = (event) => {
     console.error("❌ Erreur de synthèse vocale :", event);
     gaussianAvatar.setChatState("Listening");
+    currentUtterance = null;
   };
 
-  // Petit délai de 50ms pour laisser le temps au moteur audio iOS d'être prêt
+  // Traitement spécifique Safari/iOS : Contournement du problème de thread
   setTimeout(() => {
-    window.speechSynthesis.speak(speech);
-  }, 50);
+    if (currentUtterance) {
+      window.speechSynthesis.speak(currentUtterance);
+    }
+  }, 100);
 }
 
 // ===============================
@@ -130,7 +155,6 @@ connectWebSocket(
 // ===============================
 
 startAutoListening((text: string) => {
-  // L'utilisateur a interagi vocalement -> Valider l'interaction audio
   unlockAudio();
 
   console.log("🚀 Envoi automatique :", text);

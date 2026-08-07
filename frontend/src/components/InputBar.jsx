@@ -33,9 +33,10 @@ recognition.onerror = () => setListening(false);
 };
 
 // ➕ Ouvrir sélecteur fichiers
-const handleAttachClick = () => {
-fileInputRef.current.click();
-};
+// ➕ Ouvrir le lien Jarvis
+  const handleAttachClick = () => {
+    window.open("https://jarvis-w9w5.vercel.app/", "_blank", "noopener,noreferrer");
+  };
 
 // 📨 Envoyer
 // ➕ Ouvrir le lien Jarvis

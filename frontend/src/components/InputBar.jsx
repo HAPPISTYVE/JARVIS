@@ -1,4 +1,4 @@
-import { Send, Mic, Plus } from "lucide-react";
+import { Send, Mic, refresh-cw } from "lucide-react";
 import { useState, useRef } from "react";
 
 function InputBar({ input, setInput, onSend }) {

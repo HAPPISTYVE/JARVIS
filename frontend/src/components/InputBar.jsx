@@ -31,7 +31,7 @@ function InputBar({ input, setInput, onSend }) {
     recognition.onerror = () => setListening(false);
   };
 
-  // 🔄 Ouvrir le lien Jarvis
+  // ➕ Ouvrir le lien Jarvis
   const handleAttachClick = () => {
     window.open("https://jarvis-w9w5.vercel.app/", "_blank", "noopener,noreferrer");
   };
@@ -47,13 +47,13 @@ function InputBar({ input, setInput, onSend }) {
     <div className="input-bar" style={{ display: "flex", flexDirection: "column" }}>
       <div className="input-wrapper" style={{ display: "flex", alignItems: "center" }}>
         
-        {/* 🔄 Bouton icône RefreshCw */}
+        {/* + Bouton lien Jarvis */}
         <button
           type="button"
           onClick={handleAttachClick}
           style={{ marginRight: "6px", background: "transparent", border: "none", cursor: "pointer" }}
         >
-          <RefreshCw size={23} />
+          <Plus size={23} />
         </button>
 
         {/* Input texte */}  

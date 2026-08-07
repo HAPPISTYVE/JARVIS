@@ -1,4 +1,4 @@
-import { Send, Mic, Plus } from "lucide-react";
+import { Send, Mic, RefreshCw } from "lucide-react";
 import { useState, useRef } from "react";
 
 function InputBar({ input, setInput, onSend }) {
@@ -31,7 +31,7 @@ function InputBar({ input, setInput, onSend }) {
     recognition.onerror = () => setListening(false);
   };
 
-  // ➕ Ouvrir le lien Jarvis
+  // 🔄 Ouvrir le lien Jarvis
   const handleAttachClick = () => {
     window.open("https://jarvis-w9w5.vercel.app/", "_blank", "noopener,noreferrer");
   };
@@ -47,13 +47,13 @@ function InputBar({ input, setInput, onSend }) {
     <div className="input-bar" style={{ display: "flex", flexDirection: "column" }}>
       <div className="input-wrapper" style={{ display: "flex", alignItems: "center" }}>
         
-        {/* + Bouton lien Jarvis */}
+        {/* 🔄 Bouton icône RefreshCw */}
         <button
           type="button"
           onClick={handleAttachClick}
           style={{ marginRight: "6px", background: "transparent", border: "none", cursor: "pointer" }}
         >
-          <Plus size={23} />
+          <RefreshCw size={23} />
         </button>
 
         {/* Input texte */}  

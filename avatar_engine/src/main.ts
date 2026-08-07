@@ -16,17 +16,23 @@ let stopListening: (() => void) | null = null;
 let startListeningAgain: (() => void) | null = null;
 
 // ------------------------------
-// Charger les voix Safari
+// Charger et trier les voix pour un meilleur accent
 // ------------------------------
 function loadVoices() {
   const voices = window.speechSynthesis.getVoices();
-  console.log('Voices:', voices);
+  console.log('Voices disponibles:', voices);
 
+  // Recherche d'une voix française de haute qualité (Apple Enhanced/Premium ou Google)
   selectedVoice =
+    voices.find(v => v.lang === 'fr-FR' && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Google'))) ||
     voices.find(v => v.lang === 'fr-FR') ||
     voices.find(v => v.lang.startsWith('fr')) ||
     voices[0] ||
     null;
+
+  if (selectedVoice) {
+    console.log(`✅ Voix sélectionnée : ${selectedVoice.name} (${selectedVoice.lang})`);
+  }
 }
 
 if ('speechSynthesis' in window) {
@@ -53,13 +59,14 @@ activateButton.style.padding = '15px';
 activateButton.style.fontSize = '18px';
 
 activateButton.onclick = () => {
-
   const test = new SpeechSynthesisUtterance(
     'Bonjour, JARVIS est activé'
   );
 
   test.lang = 'fr-FR';
   test.volume = 1;
+  test.rate = 1;
+  test.pitch = 1;
 
   if (selectedVoice) {
     test.voice = selectedVoice;
@@ -69,11 +76,9 @@ activateButton.onclick = () => {
   window.speechSynthesis.speak(test);
 
   audioReady = true;
-
   activateButton.remove();
 
   console.log('✅ Audio activé');
-
 };
 
 document.body.appendChild(activateButton);
@@ -84,8 +89,8 @@ document.body.appendChild(activateButton);
 function speak(text: string) {
   if (!text) return;
   if (!audioReady) {
-  console.log("⚠️ Audio non activé");
-  return;
+    console.log("⚠️ Audio non activé");
+    return;
   }
   // Arrêter le micro avant de parler
   if (stopListening) {
@@ -93,14 +98,14 @@ function speak(text: string) {
   }
 
   // Nettoyage texte
-  text = text.replace(/[\\u200B-\\u200D\\uFEFF]/g, '').trim();
+  text = text.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
 
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'fr-FR';
-  utterance.rate = 1;
-  utterance.pitch = 1;
+  utterance.rate = 1;   // Vitesse normale (ajustez entre 0.9 et 1.1 si besoin)
+  utterance.pitch = 1;  // Ton normal
   utterance.volume = 1;
 
   if (selectedVoice) {

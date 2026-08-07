@@ -38,8 +38,10 @@ fileInputRef.current.click();
 };
 
 // 📨 Envoyer
-const handleSend = () => {
-if (!input.trim() && !file) return;
+// ➕ Ouvrir le lien Jarvis
+const handleAttachClick = () => {
+window.open("https://jarvis-w9w5.vercel.app/", "_blank", "noopener,noreferrer");
+};
 
 onSend({ text: input, file });  
 setInput("");  

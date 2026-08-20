@@ -48,28 +48,24 @@ export class GaussianAvatar {
     return this.curState;
   }
 
-  // Permet de recevoir les blendshapes du backend
   public updateBlendshapes(data: any) {
     this.liveBlendshapes = data;
   }
 
-  // Permet de changer l'état du chatbot et de nettoyer le flux live si besoin
   public setChatState(state: string) {
     this.curState = state;
-    
-    // Si on arrête de parler, on réinitialise le live pour reprendre l'animation normale
     if (state !== "Speaking") {
       this.liveBlendshapes = null;
     }
   }
 
   public getArkitFaceFrame() {
-    // Calcul du temps réel à chaque frame pour que l'animation ne s'arrête jamais
     const currentTime = performance.now() / 1000;
     this.breathing += 0.05;
     this.speakingTimer += 0.4;
 
-    // 1) Base par défaut : Visage neutre + Respiration active
+    // 1) Base universelle (utilisée au démarrage, en Idle, et en Listening)
+    // Cela garantit que le mouvement de respiration/tête est le même partout hors "Speaking"
     this.expressitionData = {
         jawOpen: 0.05,
         mouthClose: 0.50,
@@ -97,16 +93,14 @@ export class GaussianAvatar {
         });
     }
 
-    // 4) Ajustements selon les états (Listening, Thinking, etc.)
-    if (this.curState === "Listening") {
-        this.expressitionData.headPitch = Math.sin(this.breathing) * 0.02;
-    }
-
+    // 4) Ajustements spécifiques optionnels pour d'autres états (ex: Thinking)
     if (this.curState === "Thinking") {
         this.expressitionData.browInnerUp = 0.25;
     }
 
-    // Retourne l'objet d'expressions mis à jour
+    // Note : Pour "Listening", il utilise désormais directement la base (1) 
+    // exactement comme au démarrage, donc il continue de bouger de la même manière fluide.
+
     return this.expressitionData;
   }
 }

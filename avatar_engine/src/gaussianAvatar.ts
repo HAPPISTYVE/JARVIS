@@ -53,51 +53,41 @@ export class GaussianAvatar {
     this.liveBlendshapes = data;
   }
 
-  // Permet aussi de changer l'état du chatbot
+  // Permet de changer l'état du chatbot et de nettoyer le flux live si besoin
   public setChatState(state: string) {
     this.curState = state;
     
-    // SÉCURITÉ : Si on passe en mode Listening ou autre, 
-    // on efface le flux live figé pour redonner la main aux animations de base
+    // Si on arrête de parler, on réinitialise le live pour reprendre l'animation normale
     if (state !== "Speaking") {
       this.liveBlendshapes = null;
     }
   }
 
   public getArkitFaceFrame() {
+    // Calcul du temps réel à chaque frame pour que l'animation ne s'arrête jamais
+    const currentTime = performance.now() / 1000;
     this.breathing += 0.05;
     this.speakingTimer += 0.4;
 
-    // 1) Si on a un flux live valide (uniquement en mode Speaking avec données reçues)
+    // 1) Base par défaut : Visage neutre + Respiration active
+    this.expressitionData = {
+        jawOpen: 0.05,
+        mouthClose: 0.50,
+        headPitch: Math.sin(this.breathing) * 0.015,
+        headYaw: Math.cos(this.breathing * 0.5) * 0.01
+    };
+
+    // 2) Si on reçoit du live et qu'on est en train de parler
     if (this.liveBlendshapes && this.curState === "Speaking") {
         this.expressitionData = {
+            ...this.expressitionData,
             ...this.liveBlendshapes
         };
     } 
-    // 2) Sinon, visage neutre avec respiration par défaut
-    else {
-        this.expressitionData = {
-            jawOpen: 0.05,
-            mouthClose: 0.50,
-            headPitch: Math.sin(this.breathing) * 0.015,
-            headYaw: Math.cos(this.breathing * 0.5) * 0.01
-        };
-    }
-
-    // 3) Ajustements selon les états du chatbot
-    if (this.curState === "Listening") {
-        this.expressitionData.headPitch = Math.sin(this.breathing) * 0.02;
-    }
-
-    if (this.curState === "Thinking") {
-        this.expressitionData.browInnerUp = 0.25;
-    }
-
-    // 4) Animation de la bouche via le JSON si Speaking et pas de flux live
-    if (this.curState === "Speaking" && !this.liveBlendshapes) {
+    // 3) Animation de la bouche via le JSON si Speaking et pas de flux live
+    else if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
         const frameInfoInternal = 1 / 30;
-        const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);
         const frameIndex = Math.floor(calcDelta / frameInfoInternal);
@@ -107,6 +97,16 @@ export class GaussianAvatar {
         });
     }
 
+    // 4) Ajustements selon les états (Listening, Thinking, etc.)
+    if (this.curState === "Listening") {
+        this.expressitionData.headPitch = Math.sin(this.breathing) * 0.02;
+    }
+
+    if (this.curState === "Thinking") {
+        this.expressitionData.browInnerUp = 0.25;
+    }
+
+    // Retourne l'objet d'expressions mis à jour
     return this.expressitionData;
   }
 }

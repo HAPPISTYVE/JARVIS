@@ -80,11 +80,16 @@ export class GaussianAvatar {
     
 
     
-        // 2) Etats du chatbot
+            // 2) Etats du chatbot
     if (this.curState === "Listening") {
-        this.expressitionData.headPitch = Math.sin(this.breathing) * 0.02;
-        this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.015; // <--- Ajoute cette ligne
+        this.expressitionData = {
+            jawOpen: 0.05,
+            mouthClose: 0.50,
+            headPitch: Math.sin(this.breathing) * 0.015,
+            headYaw: Math.cos(this.breathing * 0.5) * 0.01
+        };
     }
+
 
 
     if (this.curState === "Thinking") {

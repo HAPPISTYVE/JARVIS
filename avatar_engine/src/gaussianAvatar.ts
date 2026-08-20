@@ -48,42 +48,52 @@ export class GaussianAvatar {
     return this.curState;
   }
 
+  // Permet de recevoir les blendshapes du backend
   public updateBlendshapes(data: any) {
     this.liveBlendshapes = data;
   }
 
+  // Permet aussi de changer l'Ã©tat du chatbot
   public setChatState(state: string) {
     this.curState = state;
-    if (state !== "Speaking") {
-      this.liveBlendshapes = null;
-    }
   }
 
   public getArkitFaceFrame() {
-    const currentTime = performance.now() / 1000;
     this.breathing += 0.05;
     this.speakingTimer += 0.4;
 
-    // 1) Base universelle (utilisée au démarrage, en Idle, et en Listening)
-    // Cela garantit que le mouvement de respiration/tête est le même partout hors "Speaking"
+    // 1) Si le backend envoie de vrais blendshapes
+    if (this.liveBlendshapes) {
+        this.expressitionData = {
+            ...this.liveBlendshapes
+        };
+    } 
+    else {
+    // Visage neutre avec bouche lÃ©gÃ¨rement ouverte
     this.expressitionData = {
         jawOpen: 0.05,
         mouthClose: 0.50,
         headPitch: Math.sin(this.breathing) * 0.015,
         headYaw: Math.cos(this.breathing * 0.5) * 0.01
     };
+}
+    
 
-    // 2) Si on reçoit du live et qu'on est en train de parler
-    if (this.liveBlendshapes && this.curState === "Speaking") {
-        this.expressitionData = {
-            ...this.expressitionData,
-            ...this.liveBlendshapes
-        };
-    } 
-    // 3) Animation de la bouche via le JSON si Speaking et pas de flux live
-    else if (this.curState === "Speaking" && !this.liveBlendshapes) {
+    // 2) Etats du chatbot
+    if (this.curState === "Listening") {
+        this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
+        this.expressitionData.headYaw: Math.cos(this.breathing * 0.5) * 0.01
+    }
+
+    if (this.curState === "Thinking") {
+        this.expressitionData.browInnerUp = 0.25;
+    }
+
+    // 3) Animation bouche uniquement pendant Speaking (et sans flux backend)
+    if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
         const frameInfoInternal = 1 / 30;
+        const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);
         const frameIndex = Math.floor(calcDelta / frameInfoInternal);
@@ -93,11 +103,7 @@ export class GaussianAvatar {
         });
     }
 
-    
-
-    // Note : Pour "Listening", il utilise désormais directement la base (1) 
-    // exactement comme au démarrage, donc il continue de bouger de la même manière fluide.
-
+    // Un seul et unique retour Ã  la fin de la fonction
     return this.expressitionData;
   }
 }

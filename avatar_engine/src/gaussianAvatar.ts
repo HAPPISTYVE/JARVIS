@@ -80,21 +80,7 @@ export class GaussianAvatar {
     
 
     
-            // 2) Etats du chatbot
-    if (this.curState === "Listening") {
-        this.expressitionData = {
-            jawOpen: 0.05,
-            mouthClose: 0.50,
-            headPitch: Math.sin(this.breathing) * 0.015,
-            headYaw: Math.cos(this.breathing * 0.5) * 0.01
-        };
-    }
-
-
-
-    if (this.curState === "Thinking") {
-        this.expressitionData.browInnerUp = 0.25;
-    }
+           
 
     // 3) Animation bouche uniquement pendant Speaking (et sans flux backend)
     if (this.curState === "Speaking" && !this.liveBlendshapes) {

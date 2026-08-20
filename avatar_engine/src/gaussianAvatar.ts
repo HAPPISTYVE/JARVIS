@@ -93,10 +93,7 @@ export class GaussianAvatar {
         });
     }
 
-    // 4) Ajustements spécifiques optionnels pour d'autres états (ex: Thinking)
-    if (this.curState === "Thinking") {
-        this.expressitionData.browInnerUp = 0.25;
-    }
+    
 
     // Note : Pour "Listening", il utilise désormais directement la base (1) 
     // exactement comme au démarrage, donc il continue de bouger de la même manière fluide.

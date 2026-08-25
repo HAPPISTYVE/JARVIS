@@ -132,7 +132,7 @@ export class GaussianAvatar {
     // 4) Animation bouche uniquement pendant Speaking
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
-        const frameInfoInternal = 1 / 20; 
+        const frameInfoInternal = 1 / 25; 
         const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);

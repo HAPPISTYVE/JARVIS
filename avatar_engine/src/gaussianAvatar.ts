@@ -102,7 +102,7 @@ export class GaussianAvatar {
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
         // 🐢 Cadence ralentie (1 / 20 au lieu de 1 / 30) pour un mouvement plus naturel
-        const frameInfoInternal = 1 / 20; 
+        const frameInfoInternal = 1 / 30; 
         const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);

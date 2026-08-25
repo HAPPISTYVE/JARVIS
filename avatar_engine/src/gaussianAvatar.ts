@@ -53,9 +53,14 @@ export class GaussianAvatar {
     this.liveBlendshapes = data;
   }
 
-  // Permet aussi de changer l'état du chatbot
+  // Permet de changer l'état, en transformant automatiquement "Listening" en "Idle"
   public setChatState(state: string) {
-    this.curState = state;
+    // Si le main essaie de mettre "Listening", on force "Idle" en interne
+    if (state === "Listening") {
+      this.curState = "Idle";
+    } else {
+      this.curState = state;
+    }
   }
 
   public getArkitFaceFrame() {
@@ -69,27 +74,27 @@ export class GaussianAvatar {
         };
     } 
     else {
-    // Visage neutre avec bouche légèrement ouverte
-    this.expressitionData = {
-        jawOpen: 0.05,
-        mouthClose: 0.50,
-        headPitch: Math.sin(this.breathing) * 0.015,
-        headYaw: Math.cos(this.breathing * 0.5) * 0.01
-    };
-}
+      // Visage neutre avec respiration par défaut (Idle)
+      this.expressitionData = {
+          jawOpen: 0.05,
+          mouthClose: 0.50,
+          headPitch: Math.sin(this.breathing) * 0.015,
+          headYaw: Math.cos(this.breathing * 0.5) * 0.01
+      };
+    }
     
-
-    // 2) Etats du chatbot
-    if (this.curState === "Listening") {
+    // 2) Gestion de l'état Idle (et Listening intercepté qui devient Idle)
+    if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
     }
 
+    // 3) Gestion de l'état Thinking
     if (this.curState === "Thinking") {
         this.expressitionData.browInnerUp = 0.25;
     }
 
-    // 3) Animation bouche uniquement pendant Speaking (et sans flux backend)
+    // 4) Animation bouche uniquement pendant Speaking (et sans flux backend)
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
         const frameInfoInternal = 1 / 30;
@@ -103,7 +108,6 @@ export class GaussianAvatar {
         });
     }
 
-    // Un seul et unique retour à la fin de la fonction
     return this.expressitionData;
   }
 }

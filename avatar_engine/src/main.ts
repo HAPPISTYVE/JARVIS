@@ -22,13 +22,17 @@ function loadVoices() {
   const voices = window.speechSynthesis.getVoices();
   console.log('Voices disponibles:', voices);
 
-  // Recherche d'une voix française de haute qualité (Apple Enhanced/Premium ou Google)
   selectedVoice =
-    voices.find(v => v.lang === 'fr-FR' && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Google'))) ||
+    // 1. Cherche explicitement une voix "Thomas" avec "Premium" (ou un autre nom exact)
+    voices.find(v => v.lang.startsWith('fr') && v.name.includes('Thomas') && v.name.includes('Premium')) ||
+    // 2. Sinon, cherche n'importe quelle autre voix française qui s'appelle Thomas (ou autre) mais pas celle que vous ne voulez pas
+    voices.find(v => v.lang.startsWith('fr') && v.name.includes('Thomas')) ||
+    // 3. Fallback sur les autres voix françaises de qualité
+    voices.find(v => v.lang === 'fr-FR' && (v.name.includes('Enhanced') || v.name.includes('Google'))) ||
     voices.find(v => v.lang === 'fr-FR') ||
-    voices.find(v => v.lang.startsWith('fr')) ||
     voices[0] ||
     null;
+
 
   if (selectedVoice) {
     console.log(`✅ Voix sélectionnée : ${selectedVoice.name} (${selectedVoice.lang})`);

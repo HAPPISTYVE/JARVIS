@@ -44,6 +44,11 @@ export class GaussianAvatar {
   private breathing = 0;
   private speakingTimer = 0;
 
+  // 👁️ Variables pour la gestion du clignement des yeux
+  private blinkTimer = 0;
+  private isBlinking = false;
+  private blinkDuration = 0;
+
   public getChatState() {
     return this.curState;
   }
@@ -59,7 +64,7 @@ export class GaussianAvatar {
     if (state === "Listening") {
       this.curState = "Idle";
     } else {
-      // ✅ Réinitialise le chrono pile au moment de parler pour éviter le saut de la bouche
+      // Réinitialise le chrono pile au moment de parler pour éviter le saut de la bouche
       if (state === "Speaking" && this.curState !== "Speaking") {
         this.startTime = performance.now() / 1000;
       }
@@ -87,10 +92,34 @@ export class GaussianAvatar {
       };
     }
     
-    // 2) Gestion de l'état Idle (et Listening intercepté qui devient Idle)
+    // 2) Gestion de l'état Idle (et Listening intercepté qui devient Idle) + Clignement des yeux
     if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
+
+        // Logique de clignement des yeux aléatoire
+        this.blinkTimer += 1;
+        
+        // Toutes les ~3 à 5 secondes (environ 90 à 150 frames à ~30fps), on déclenche un clignement
+        if (!this.isBlinking && this.blinkTimer > Math.floor(Math.random() * 60) + 90) {
+            this.isBlinking = true;
+            this.blinkDuration = 0;
+            this.blinkTimer = 0;
+        }
+
+        if (this.isBlinking) {
+            this.blinkDuration += 0.2; // Vitesse de fermeture/ouverture
+            // Utilisation d'un sinus pour faire un aller-retour fluide des paupières (fermé puis ouvert)
+            const blinkValue = Math.sin(this.blinkDuration);
+            
+            if (blinkValue > 0) {
+                this.expressitionData.eyeBlinkLeft = blinkValue;
+                this.expressitionData.eyeBlinkRight = blinkValue;
+            } else {
+                // Fin du clignement
+                this.isBlinking = false;
+            }
+        }
     }
 
     // 3) Gestion de l'état Thinking
@@ -101,7 +130,6 @@ export class GaussianAvatar {
     // 4) Animation bouche uniquement pendant Speaking (et sans flux backend)
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
-        // 🐢 Cadence ralentie (1 / 20 au lieu de 1 / 30) pour un mouvement plus naturel
         const frameInfoInternal = 1 / 25; 
         const currentTime = performance.now() / 1000;
         

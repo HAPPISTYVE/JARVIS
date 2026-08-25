@@ -104,7 +104,7 @@ function speak(text: string) {
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'fr-FR';
-  utterance.rate = 1;   // Vitesse normale (ajustez entre 0.9 et 1.1 si besoin)
+  utterance.rate = 1;   // Vitesse normale
   utterance.pitch = 1;  // Ton normal
   utterance.volume = 1;
 
@@ -153,11 +153,17 @@ connectWebSocket(data => {
       break;
 
     case 'state':
+      // Sécurité : empêche le backend d'écraser l'état Speaking pendant que Jarvis parle
+      if (gaussianAvatar.curState === 'Speaking') {
+        console.log("🔒 Avatar en train de parler, state ignoré :", data.state);
+        break;
+      }
       gaussianAvatar.setChatState(data.state);
       break;
 
     case 'response':
       if (data.text) {
+        gaussianAvatar.setChatState('Speaking');
         speak(data.text);
       }
       break;

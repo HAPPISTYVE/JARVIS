@@ -59,6 +59,10 @@ export class GaussianAvatar {
     if (state === "Listening") {
       this.curState = "Idle";
     } else {
+      // ✅ Réinitialise le chrono pile au moment de parler pour éviter le saut de la bouche
+      if (state === "Speaking" && this.curState !== "Speaking") {
+        this.startTime = performance.now() / 1000;
+      }
       this.curState = state;
     }
   }
@@ -97,7 +101,8 @@ export class GaussianAvatar {
     // 4) Animation bouche uniquement pendant Speaking (et sans flux backend)
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
-        const frameInfoInternal = 1 / 30;
+        // 🐢 Cadence ralentie (1 / 20 au lieu de 1 / 30) pour un mouvement plus naturel
+        const frameInfoInternal = 1 / 20; 
         const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);

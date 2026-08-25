@@ -44,11 +44,14 @@ export class GaussianAvatar {
   private breathing = 0;
   private speakingTimer = 0;
 
-  // Variables pour un clignement naturel (simple, sans double clignement)
+  // Variables pour un clignement naturel simple
   private blinkTimer = 0;
   private isBlinking = false;
   private blinkProgress = 0;
   private nextBlinkInterval = 150; 
+
+  // Variable pour faire évoluer le sourire en douceur
+  private smileCycle = 0;
 
   public getChatState() {
     return this.curState;
@@ -89,15 +92,21 @@ export class GaussianAvatar {
       };
     }
     
-    // 2) Gestion de l'état Idle : Respiration, Sourire subtil et Clignement des yeux
+    // 2) Gestion de l'état Idle : Respiration, Sourires changeants et Clignements
     if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
 
-        // 😊 Léger sourire subtil et naturel (varie très légèrement avec la respiration pour être vivant)
-        const subtleSmile = 0.15 + Math.sin(this.breathing * 0.5) * 0.03;
-        this.expressitionData.mouthSmileLeft = subtleSmile;
-        this.expressitionData.mouthSmileRight = subtleSmile;
+        // 😊 Sourire vivant et changeant (oscille lentement entre un sourire très léger et un sourire plus marqué)
+        this.smileCycle += 0.015; // Vitesse d'évolution du sourire
+        // Utilisation de sin + cos combinés pour créer un rythme non répétitif et naturel
+        const dynamicSmile = 0.12 + (Math.sin(this.smileCycle) * 0.1) + (Math.cos(this.smileCycle * 0.7) * 0.05);
+        
+        // On s'assure que la valeur reste toujours positive et naturelle (entre 0.05 et 0.3)
+        const finalSmile = Math.max(0.05, Math.min(0.3, dynamicSmile));
+
+        this.expressitionData.mouthSmileLeft = finalSmile;
+        this.expressitionData.mouthSmileRight = finalSmile;
 
         // Gestion du clignement des yeux (simple et espacé)
         this.blinkTimer += 1;
@@ -105,7 +114,6 @@ export class GaussianAvatar {
             this.isBlinking = true;
             this.blinkProgress = 0;
             this.blinkTimer = 0;
-            // Nouveau délai aléatoire entre 2.5 et 6 secondes
             this.nextBlinkInterval = Math.floor(Math.random() * 120) + 80;
         }
 

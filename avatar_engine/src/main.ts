@@ -16,26 +16,27 @@ let stopListening: (() => void) | null = null;
 let startListeningAgain: (() => void) | null = null;
 
 // ------------------------------
-// Charger et trier les voix pour un meilleur accent
+// Charger et trier les voix (Forcé Masculin / Thomas Premium)
 // ------------------------------
 function loadVoices() {
   const voices = window.speechSynthesis.getVoices();
-  console.log('Voices disponibles:', voices);
+  console.log('Voices disponibles:', voices.map(v => `${v.name} (${v.lang})`));
 
   selectedVoice =
-    // 1. Cherche explicitement une voix "Thomas" avec "Premium" (ou un autre nom exact)
-    voices.find(v => v.lang.startsWith('fr') && v.name.includes('Thomas') && v.name.includes('Premium')) ||
-    // 2. Sinon, cherche n'importe quelle autre voix française qui s'appelle Thomas (ou autre) mais pas celle que vous ne voulez pas
+    // 1. Cherche en priorité "Thomas" avec "Premium" ou "Enhanced" (Généralement masculin sur iOS/macOS)
+    voices.find(v => v.lang.startsWith('fr') && v.name.includes('Thomas') && (v.name.includes('Premium') || v.name.includes('Enhanced'))) ||
+    // 2. Cherche n'importe quelle voix "Thomas"
     voices.find(v => v.lang.startsWith('fr') && v.name.includes('Thomas')) ||
-    // 3. Fallback sur les autres voix françaises de qualité
-    voices.find(v => v.lang === 'fr-FR' && (v.name.includes('Enhanced') || v.name.includes('Google'))) ||
-    voices.find(v => v.lang === 'fr-FR') ||
+    // 3. Cherche une autre voix française masculine connue (ex: Henri, Paul) ou en s'assurant qu'elle n'est pas féminine
+    voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Henri') || v.name.includes('Paul'))) ||
+    // 4. Fallback sur une voix française qui ne contient pas de prénoms féminins évidents
+    voices.find(v => v.lang.startsWith('fr') && !v.name.includes('Amélie') && !v.name.includes('Audrey') && !v.name.includes('Marie') && !v.name.includes('Hortense')) ||
+    voices.find(v => v.lang.startsWith('fr')) ||
     voices[0] ||
     null;
 
-
   if (selectedVoice) {
-    console.log(`✅ Voix sélectionnée : ${selectedVoice.name} (${selectedVoice.lang})`);
+    console.log(`✅ Voix masculine sélectionnée : ${selectedVoice.name} (${selectedVoice.lang})`);
   }
 }
 
@@ -109,7 +110,7 @@ function speak(text: string) {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'fr-FR';
   utterance.rate = 1;   // Vitesse normale
-  utterance.pitch = 1;  // Ton normal
+  utterance.pitch = 1;  // Ton normal (laissez à 1 pour garder le timbre naturel de Thomas Premium)
   utterance.volume = 1;
 
   if (selectedVoice) {

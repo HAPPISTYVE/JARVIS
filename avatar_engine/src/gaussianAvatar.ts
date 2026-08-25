@@ -44,12 +44,11 @@ export class GaussianAvatar {
   private breathing = 0;
   private speakingTimer = 0;
 
-  // 👁️ Variables pour un clignement totalement imprévisible
+  // Variables pour un clignement naturel (simple, sans double clignement)
   private blinkTimer = 0;
   private isBlinking = false;
   private blinkProgress = 0;
   private nextBlinkInterval = 150; 
-  private doubleBlinkChance = false;
 
   public getChatState() {
     return this.curState;
@@ -81,7 +80,7 @@ export class GaussianAvatar {
         };
     } 
     else {
-      // Visage neutre avec respiration par défaut (Idle)
+      // Visage neutre de base
       this.expressitionData = {
           jawOpen: 0.05,
           mouthClose: 0.50,
@@ -90,29 +89,27 @@ export class GaussianAvatar {
       };
     }
     
-    // 2) Gestion de l'état Idle + Clignement imprévisible
+    // 2) Gestion de l'état Idle : Respiration, Sourire subtil et Clignement des yeux
     if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
 
-        // Gestion du timing aléatoire (délai large entre 2 et 8 secondes pour casser la routine)
+        // 😊 Léger sourire subtil et naturel (varie très légèrement avec la respiration pour être vivant)
+        const subtleSmile = 0.15 + Math.sin(this.breathing * 0.5) * 0.03;
+        this.expressitionData.mouthSmileLeft = subtleSmile;
+        this.expressitionData.mouthSmileRight = subtleSmile;
+
+        // Gestion du clignement des yeux (simple et espacé)
         this.blinkTimer += 1;
         if (!this.isBlinking && this.blinkTimer > this.nextBlinkInterval) {
             this.isBlinking = true;
             this.blinkProgress = 0;
             this.blinkTimer = 0;
-
-            // 30% de chance qu'il fasse un double clignement rapide (très humain)
-            if (Math.random() < 0.3) {
-                this.nextBlinkInterval = 25; // Très court délai pour le 2ème clignement
-            } else {
-                // Sinon, nouveau délai long totalement aléatoire (entre 2 et 8 secondes)
-                this.nextBlinkInterval = Math.floor(Math.random() * 180) + 60;
-            }
+            // Nouveau délai aléatoire entre 2.5 et 6 secondes
+            this.nextBlinkInterval = Math.floor(Math.random() * 120) + 80;
         }
 
         if (this.isBlinking) {
-            // Vitesse du battement de paupière
             this.blinkProgress += 0.15; 
             const blinkValue = Math.sin(this.blinkProgress * Math.PI);
             

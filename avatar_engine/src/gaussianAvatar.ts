@@ -44,11 +44,12 @@ export class GaussianAvatar {
   private breathing = 0;
   private speakingTimer = 0;
 
-  // 👁️ Variables pour un clignement naturel
+  // 👁️ Variables pour un clignement totalement imprévisible
   private blinkTimer = 0;
   private isBlinking = false;
   private blinkProgress = 0;
-  private nextBlinkInterval = 120; // Délai initial avant le premier clignement
+  private nextBlinkInterval = 150; 
+  private doubleBlinkChance = false;
 
   public getChatState() {
     return this.curState;
@@ -89,33 +90,36 @@ export class GaussianAvatar {
       };
     }
     
-    // 2) Gestion de l'état Idle + Clignement ultra-naturel
+    // 2) Gestion de l'état Idle + Clignement imprévisible
     if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
 
-        // Gestion du timing aléatoire entre les clignements (entre 2.5 et 6 secondes)
+        // Gestion du timing aléatoire (délai large entre 2 et 8 secondes pour casser la routine)
         this.blinkTimer += 1;
         if (!this.isBlinking && this.blinkTimer > this.nextBlinkInterval) {
             this.isBlinking = true;
             this.blinkProgress = 0;
-            // Prochain clignement aléatoire
-            this.nextBlinkInterval = Math.floor(Math.random() * 120) + 80;
             this.blinkTimer = 0;
+
+            // 30% de chance qu'il fasse un double clignement rapide (très humain)
+            if (Math.random() < 0.3) {
+                this.nextBlinkInterval = 25; // Très court délai pour le 2ème clignement
+            } else {
+                // Sinon, nouveau délai long totalement aléatoire (entre 2 et 8 secondes)
+                this.nextBlinkInterval = Math.floor(Math.random() * 180) + 60;
+            }
         }
 
         if (this.isBlinking) {
-            // Vitesse progressive et organique
-            this.blinkProgress += 0.12; 
-            
-            // Courbe en cloche asymétrique pour imiter le vrai cillement humain
+            // Vitesse du battement de paupière
+            this.blinkProgress += 0.15; 
             const blinkValue = Math.sin(this.blinkProgress * Math.PI);
             
             if (this.blinkProgress <= 1) {
                 this.expressitionData.eyeBlinkLeft = Math.max(0, blinkValue);
                 this.expressitionData.eyeBlinkRight = Math.max(0, blinkValue);
             } else {
-                // Fin du clignement
                 this.isBlinking = false;
                 this.expressitionData.eyeBlinkLeft = 0;
                 this.expressitionData.eyeBlinkRight = 0;
@@ -131,7 +135,7 @@ export class GaussianAvatar {
     // 4) Animation bouche uniquement pendant Speaking
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
-        const frameInfoInternal = 1 / 25; 
+        const frameInfoInternal = 1 / 20; 
         const currentTime = performance.now() / 1000;
         
         const calcDelta = (currentTime - this.startTime) % (length * frameInfoInternal);

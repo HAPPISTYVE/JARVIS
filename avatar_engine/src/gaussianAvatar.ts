@@ -44,27 +44,24 @@ export class GaussianAvatar {
   private breathing = 0;
   private speakingTimer = 0;
 
-  // 👁️ Variables pour la gestion du clignement des yeux
+  // 👁️ Variables pour un clignement naturel
   private blinkTimer = 0;
   private isBlinking = false;
-  private blinkDuration = 0;
+  private blinkProgress = 0;
+  private nextBlinkInterval = 120; // Délai initial avant le premier clignement
 
   public getChatState() {
     return this.curState;
   }
 
-  // Permet de recevoir les blendshapes du backend
   public updateBlendshapes(data: any) {
     this.liveBlendshapes = data;
   }
 
-  // Permet de changer l'état, en transformant automatiquement "Listening" en "Idle"
   public setChatState(state: string) {
-    // Si le main essaie de mettre "Listening", on force "Idle" en interne
     if (state === "Listening") {
       this.curState = "Idle";
     } else {
-      // Réinitialise le chrono pile au moment de parler pour éviter le saut de la bouche
       if (state === "Speaking" && this.curState !== "Speaking") {
         this.startTime = performance.now() / 1000;
       }
@@ -92,32 +89,36 @@ export class GaussianAvatar {
       };
     }
     
-    // 2) Gestion de l'état Idle (et Listening intercepté qui devient Idle) + Clignement des yeux
+    // 2) Gestion de l'état Idle + Clignement ultra-naturel
     if (this.curState === "Idle") {
         this.expressitionData.headPitch = Math.sin(this.breathing) * 0.015;
         this.expressitionData.headYaw = Math.cos(this.breathing * 0.5) * 0.01;
 
-        // Logique de clignement des yeux aléatoire
+        // Gestion du timing aléatoire entre les clignements (entre 2.5 et 6 secondes)
         this.blinkTimer += 1;
-        
-        // Toutes les ~3 à 5 secondes (environ 90 à 150 frames à ~30fps), on déclenche un clignement
-        if (!this.isBlinking && this.blinkTimer > Math.floor(Math.random() * 60) + 90) {
+        if (!this.isBlinking && this.blinkTimer > this.nextBlinkInterval) {
             this.isBlinking = true;
-            this.blinkDuration = 0;
+            this.blinkProgress = 0;
+            // Prochain clignement aléatoire
+            this.nextBlinkInterval = Math.floor(Math.random() * 120) + 80;
             this.blinkTimer = 0;
         }
 
         if (this.isBlinking) {
-            this.blinkDuration += 0.2; // Vitesse de fermeture/ouverture
-            // Utilisation d'un sinus pour faire un aller-retour fluide des paupières (fermé puis ouvert)
-            const blinkValue = Math.sin(this.blinkDuration);
+            // Vitesse progressive et organique
+            this.blinkProgress += 0.12; 
             
-            if (blinkValue > 0) {
-                this.expressitionData.eyeBlinkLeft = blinkValue;
-                this.expressitionData.eyeBlinkRight = blinkValue;
+            // Courbe en cloche asymétrique pour imiter le vrai cillement humain
+            const blinkValue = Math.sin(this.blinkProgress * Math.PI);
+            
+            if (this.blinkProgress <= 1) {
+                this.expressitionData.eyeBlinkLeft = Math.max(0, blinkValue);
+                this.expressitionData.eyeBlinkRight = Math.max(0, blinkValue);
             } else {
                 // Fin du clignement
                 this.isBlinking = false;
+                this.expressitionData.eyeBlinkLeft = 0;
+                this.expressitionData.eyeBlinkRight = 0;
             }
         }
     }
@@ -127,7 +128,7 @@ export class GaussianAvatar {
         this.expressitionData.browInnerUp = 0.25;
     }
 
-    // 4) Animation bouche uniquement pendant Speaking (et sans flux backend)
+    // 4) Animation bouche uniquement pendant Speaking
     if (this.curState === "Speaking" && !this.liveBlendshapes) {
         const length = bsData["frames"].length;
         const frameInfoInternal = 1 / 25; 
